@@ -897,8 +897,7 @@ impl ProofApp {
             let name = r.name.clone();
             let selected = self.selected == Some(i);
             if let Some(run) = self.running.as_ref().filter(|run| !run.tracing && run.runner == r.name) {
-                let cmd = if r.traced() { format!("{} · traced", r.run) } else { r.run.clone() };
-                list = list.child(self.running_card(run, &cmd, &th));
+                list = list.child(self.running_card(run, &format!("{}{}", r.run, runner_suffix(snap, r)), &th));
                 continue;
             }
             let queued = self.running.as_ref().is_some_and(|run| run.queue.contains(&r.name));
@@ -967,7 +966,13 @@ impl ProofApp {
                             .flex_col()
                             .gap(px(2.))
                             .child(div().flex().gap(space::S2).child(div().font_family(MONO).child(name)).child(div().text_color(th.text_muted).child(said)))
-                            .child(mono(r.run.clone(), text::XS, th.text_faint).truncate()),
+                            .child(
+                                mono(String::new(), text::XS, th.text_faint)
+                                    .flex()
+                                    .overflow_hidden()
+                                    .child(div().min_w_0().truncate().child(r.run.clone()))
+                                    .child(div().flex_none().whitespace_nowrap().child(runner_suffix(snap, r))),
+                            ),
                     )
                     .child(mono(at, text::XS, th.text_faint).whitespace_nowrap()),
             );
@@ -1097,6 +1102,18 @@ impl ProofApp {
             )
             .into_any_element()
     }
+}
+
+/// " · Node 24.14 · traced": what a runner's command runs on here, and whether it's traced.
+fn runner_suffix(snap: &Snapshot, r: &proof_core::Runner) -> String {
+    let mut out = String::new();
+    if let Some(v) = snap.runtimes.get(&r.name) {
+        out.push_str(&format!(" · {v}"));
+    }
+    if r.traced() {
+        out.push_str(" · traced");
+    }
+    out
 }
 
 fn h1(t: impl Into<gpui::SharedString>) -> Div {

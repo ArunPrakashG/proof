@@ -60,6 +60,27 @@ pub fn check_requires(map: &Map, r: &Runner) -> Option<String> {
     }
 }
 
+/// The runtime a runner's command starts, like "Node 24.14", asked in the runner's own cwd and env.
+/// None for commands it doesn't know, such as a shell script.
+pub fn runtime(map: &Map, r: &Runner) -> Option<String> {
+    const KNOWN: &[(&[&str], &str, &str)] = &[
+        (&["node", "npm", "npx", "pnpm", "yarn"], "node --version", "Node"),
+        (&["bun", "bunx"], "bun --version", "Bun"),
+        (&["deno"], "deno --version", "Deno"),
+        (&["cargo"], "rustc --version", "Rust"),
+        (&["python", "python3", "pytest", "uv"], "python3 --version", "Python"),
+        (&["go"], "go version", "Go"),
+    ];
+    static VERSION: OnceLock<Regex> = OnceLock::new();
+    let program = r.run.split_whitespace().find(|w| !w.contains('='))?;
+    let program = program.rsplit('/').next().unwrap_or(program);
+    let (_, ask, label) = KNOWN.iter().find(|(names, _, _)| names.contains(&program))?;
+    let out = shell(map, r, ask).stdin(Stdio::null()).output().ok().filter(|o| o.status.success())?;
+    let text = String::from_utf8_lossy(&out.stdout);
+    let v = VERSION.get_or_init(|| Regex::new(r"(\d+)\.(\d+)").unwrap()).captures(&text)?;
+    Some(format!("{label} {}.{}", &v[1], &v[2]))
+}
+
 /// Run one runner, streaming events as tests finish, and record the results.
 /// Setting `stop` ends the run early; nothing is recorded for a stopped run.
 pub fn run_runner(map: &Map, name: &str, stop: Arc<AtomicBool>, on: &mut dyn FnMut(Event)) -> Result<RunRecord> {

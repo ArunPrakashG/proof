@@ -5,7 +5,7 @@ use std::path::{Path, PathBuf};
 
 use proof_core::affected::{since_choices, Since};
 use proof_core::git::{self, Head};
-use proof_core::run::check_requires;
+use proof_core::run::{check_requires, runtime};
 use proof_core::{affected, assess, Affected, Map, MapError, State, Store, Verdicts};
 
 pub struct Snapshot {
@@ -17,6 +17,8 @@ pub struct Snapshot {
     pub since_choices: Vec<Since>,
     /// runner -> why it can't run on this machine now
     pub blocked_now: HashMap<String, String>,
+    /// runner -> the runtime its command starts here, like "Node 24.14"
+    pub runtimes: HashMap<String, String>,
     /// (commit, path) -> lines (added, removed) from that commit to now, for stale scenarios
     pub stale_lines: HashMap<(String, String), (u32, u32)>,
     /// commit -> the newest commit since it that touched its stale files
@@ -42,10 +44,12 @@ impl Snapshot {
         let affected = affected::affected(&map, since.as_deref()).map_err(other)?;
         let since_choices = since_choices(&map, &store, since.as_deref());
 
-        let blocked_now = if check_runners || previous.is_none() {
-            map.runners.iter().filter_map(|r| check_requires(&map, r).map(|why| (r.name.clone(), why))).collect()
-        } else {
-            previous.map(|p| p.blocked_now.clone()).unwrap_or_default()
+        let (blocked_now, runtimes) = match previous {
+            Some(p) if !check_runners => (p.blocked_now.clone(), p.runtimes.clone()),
+            _ => (
+                map.runners.iter().filter_map(|r| check_requires(&map, r).map(|why| (r.name.clone(), why))).collect(),
+                map.runners.iter().filter_map(|r| runtime(&map, r).map(|v| (r.name.clone(), v))).collect(),
+            ),
         };
 
         // what changed under each stale scenario, measured from the commit its evidence came from
@@ -76,7 +80,7 @@ impl Snapshot {
             }
         }
 
-        Ok(Snapshot { map, store, verdicts, head, affected, since_choices, blocked_now, stale_lines, latest, subjects, source, unclaimed })
+        Ok(Snapshot { map, store, verdicts, head, affected, since_choices, blocked_now, runtimes, stale_lines, latest, subjects, source, unclaimed })
     }
 
     pub fn total(&self, state: State) -> usize {
