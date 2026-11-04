@@ -15,6 +15,7 @@ fn re(cell: &'static OnceLock<Regex>, pattern: &str) -> &'static Regex {
 }
 
 static TAP: OnceLock<Regex> = OnceLock::new();
+static SPEC: OnceLock<Regex> = OnceLock::new();
 static CARGO: OnceLock<Regex> = OnceLock::new();
 static STEP: OnceLock<Regex> = OnceLock::new();
 
@@ -23,8 +24,12 @@ pub fn parse_line(format: &str, line: &str) -> Option<Item> {
     let line = line.trim_end_matches('\r');
     match format {
         "tap" => {
-            let c = re(&TAP, r"(?:^|\s)(not )?ok \d+ - (.*?)(?:\s+# (?:SKIP|TODO).*)?$").captures(line)?;
-            Some(Item { name: c[2].trim().to_string(), ok: c.get(1).is_none() })
+            if let Some(c) = re(&TAP, r"(?:^|\s)(not )?ok \d+ - (.*?)(?:\s+# (?:SKIP|TODO).*)?$").captures(line) {
+                return Some(Item { name: c[2].trim().to_string(), ok: c.get(1).is_none() });
+            }
+            // node's default spec reporter, which CI logs often have instead: `✔ name (12.3ms)`
+            let c = re(&SPEC, r"(?:^|\s)(✔|✖) (.*?) \([\d.]+m?s\)$").captures(line)?;
+            Some(Item { name: c[2].trim().to_string(), ok: &c[1] == "✔" })
         }
         "cargo" => {
             let c = re(&CARGO, r"(?:^|\s)test (\S+) \.\.\. (ok|FAILED|ignored)$").captures(line)?;

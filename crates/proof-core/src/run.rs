@@ -107,9 +107,18 @@ pub fn run_runner(map: &Map, name: &str, stop: Arc<AtomicBool>, on: &mut dyn FnM
             while !done.load(Ordering::Relaxed) {
                 if stop.load(Ordering::Relaxed) || started.elapsed() > timeout {
                     killed.store(true, Ordering::Relaxed);
-                    let _ = Command::new("kill").arg("-TERM").arg(format!("-{pgid}")).status();
-                    std::thread::sleep(Duration::from_secs(2));
-                    let _ = Command::new("kill").arg("-KILL").arg(format!("-{pgid}")).status();
+                    let kill = |sig: &str| {
+                        let _ = Command::new("kill").arg(sig).arg(format!("-{pgid}")).stderr(Stdio::null()).status();
+                    };
+                    kill("-TERM");
+                    // give it two seconds to exit cleanly before forcing it
+                    for _ in 0..20 {
+                        if done.load(Ordering::Relaxed) {
+                            return;
+                        }
+                        std::thread::sleep(Duration::from_millis(100));
+                    }
+                    kill("-KILL");
                     return;
                 }
                 std::thread::sleep(Duration::from_millis(100));
@@ -233,11 +242,34 @@ pub fn record(
     Ok(keep)
 }
 
-/// The commit a CI log says it ran on, when it says so.
-pub fn commit_in_log(text: &str) -> Option<String> {
+/// Commits a CI log says it checked out, most telling first. The runner image's own `Commit:` line
+/// is not one of them.
+pub fn commits_in_log(text: &str) -> Vec<String> {
+    static RE: OnceLock<[Regex; 3]> = OnceLock::new();
+    let res = RE.get_or_init(|| {
+        [
+            // actions/checkout fetches the exact commit
+            Regex::new(r"fetch .* origin \+([0-9a-f]{40}):").unwrap(),
+            Regex::new(r"HEAD is now at ([0-9a-f]{7,40})\b").unwrap(),
+            Regex::new(r"Checking out commit ([0-9a-f]{7,40})\b").unwrap(),
+        ]
+    });
+    let mut out: Vec<String> = Vec::new();
+    for re in res {
+        for c in re.captures_iter(text) {
+            if !out.contains(&c[1].to_string()) {
+                out.push(c[1].to_string());
+            }
+        }
+    }
+    out
+}
+
+/// The exit code a CI log reports for its failing step, if it reports one.
+pub fn exit_in_log(text: &str) -> Option<i32> {
     static RE: OnceLock<Regex> = OnceLock::new();
-    let re = RE.get_or_init(|| Regex::new(r"(?:HEAD is now at|Commit:|Checking out commit) ([0-9a-f]{7,40})\b").unwrap());
-    re.captures(text).map(|c| c[1].to_string())
+    let re = RE.get_or_init(|| Regex::new(r"Process completed with exit code (\d+)").unwrap());
+    re.captures_iter(text).filter_map(|c| c[1].parse().ok()).find(|c| *c != 0)
 }
 
 pub struct Imported {
@@ -248,14 +280,25 @@ pub struct Imported {
 /// Record a log made elsewhere (CI) against the tree of the commit it ran on.
 pub fn import_log(map: &Map, runner: &str, log: &Path, commit: Option<&str>, exit: i32, source: Option<&str>) -> Result<Imported> {
     let text = String::from_utf8_lossy(&std::fs::read(log).with_context(|| format!("reading {}", log.display()))?).into_owned();
+    let exit = if exit == 0 { exit_in_log(&text).unwrap_or(0) } else { exit };
     let rev = match commit {
         Some(c) => c.to_string(),
-        None => match commit_in_log(&text) {
-            Some(c) if git::exists(&map.root, &c) => c,
-            Some(c) => bail!("the log ran on {}, which isn't in this clone; pass --commit with the commit it tested", &c[..7.min(c.len())]),
-            None => "HEAD".into(),
-        },
+        None => {
+            let found = commits_in_log(&text);
+            match found.iter().find(|c| git::exists(&map.root, c)) {
+                Some(c) => c.clone(),
+                None if found.is_empty() => "HEAD".into(),
+                None => bail!(
+                    "The log ran on {}, which isn't in this clone. Fetch it, or import with --commit and the commit it tested.",
+                    &found[0][..7]
+                ),
+            }
+        }
     };
+    let r = map.runner(runner).ok_or_else(|| anyhow!("no runner called {runner:?}"))?;
+    if !matches!(r.format.as_str(), "exit") && evidence::parse(&r.format, &text, exit).0.is_empty() {
+        bail!("No {} test results in {}. Is it the {runner} runner's log?", r.format, log.display());
+    }
     let tree = git::blobs(&map.root, Some(&rev))?;
     let sha = git::short(&map.root, &rev)?;
     let source = source.map(String::from).unwrap_or_else(|| {

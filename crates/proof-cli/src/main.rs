@@ -61,7 +61,7 @@ enum Cmd {
         /// The commit the log ran on; read from the log when it says
         #[arg(long)]
         commit: Option<String>,
-        /// The run's exit code, for runners that report by exit code or steps
+        /// The run's exit code, for runners that report by exit code or steps; read from the log when it says
         #[arg(long, default_value_t = 0)]
         exit: i32,
         /// Where the log came from, e.g. "ci run 38215980266"
@@ -186,7 +186,7 @@ fn dispatch(cli: Cli) -> Result<ExitCode> {
         Cmd::Affected { since, json, md } => affected_cmd(&map, since.as_deref(), json, md, &p),
         Cmd::Gaps { json } => gaps(&map, json, &p),
         Cmd::Trace { jobs } => {
-            let report = proof_core::trace::trace(&map, jobs, &|done, total| {
+            let report = proof_core::trace::trace(&map, jobs, &Default::default(), &|done, total| {
                 if std::io::stderr().is_terminal() {
                     eprint!("\r  tracing {done} of {total} tests");
                 }

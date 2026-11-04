@@ -118,6 +118,8 @@ pub struct Running {
 enum Msg {
     Event(Event),
     Trace(usize, usize),
+    /// A trace finished; whether any claims changed.
+    Traced(bool),
     Done(Option<String>),
 }
 
@@ -641,17 +643,24 @@ impl ProofApp {
             started: Instant::now(),
             live: vec![],
             queue: vec![],
-            stop,
+            stop: stop.clone(),
         });
         self.go(Screen::Runners, cx);
         let map: Map = snap.map.clone();
         let (tx, rx) = mpsc::unbounded();
         std::thread::spawn(move || {
             let progress_tx = tx.clone();
-            let r = proof_core::trace::trace(&map, 4, &move |done, total| {
+            let r = proof_core::trace::trace(&map, 4, &stop, &move |done, total| {
                 let _ = progress_tx.unbounded_send(Msg::Trace(done, total));
             });
-            let _ = tx.unbounded_send(Msg::Done(r.err().map(|e| format!("trace: {e:#}"))));
+            let error = match r {
+                Ok(report) => {
+                    let _ = tx.unbounded_send(Msg::Traced(report.changed));
+                    None
+                }
+                Err(e) => Some(format!("trace: {e:#}")),
+            };
+            let _ = tx.unbounded_send(Msg::Done(error));
         });
         self.listen(rx, cx);
     }
@@ -727,16 +736,23 @@ impl ProofApp {
                 run.seen = done;
                 run.expected = Some(total);
             }
+            Msg::Traced(changed) => {
+                self.say(
+                    if changed {
+                        "Traced. Some claims changed, so results from before may now be stale."
+                    } else {
+                        "Traced. No claims changed."
+                    },
+                    cx,
+                );
+            }
             Msg::Done(error) => {
                 let stopped = run.stop.load(Ordering::Relaxed);
-                let tracing = run.tracing;
                 self.running = None;
                 if stopped {
                     self.say("Stopped. Nothing from the stopped runner was recorded.", cx);
                 } else if let Some(e) = error {
                     self.say(e, cx);
-                } else if tracing {
-                    self.say("Traced. Results from before may now be stale: their claims grew.", cx);
                 }
                 self.reload(true, cx);
             }
@@ -803,7 +819,8 @@ impl ProofApp {
                 edited(self, r, cx)
             }
             Cmd::Claim(id, files) => {
-                let r = edit::claim(&path, &id, &files).map(|n| format!("{} now claims {}", id, crate::ui::plural(n, "more file", "more files")));
+                let name = self.snap.as_ref().and_then(|s| s.map.cap(&id)).map_or(id.clone(), |c| c.name.clone());
+                let r = edit::claim(&path, &id, &files).map(|n| format!("{name} now claims {}", crate::ui::plural(n, "more file", "more files")));
                 edited(self, r, cx)
             }
             Cmd::NewCap(title, files) => {

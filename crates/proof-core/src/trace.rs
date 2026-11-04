@@ -3,9 +3,10 @@
 use std::collections::{BTreeMap, BTreeSet};
 use std::path::{Path, PathBuf};
 use std::process::{Command, Stdio};
+use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::{Mutex, OnceLock};
 
-use anyhow::{Context, Result};
+use anyhow::{bail, Context, Result};
 use regex::Regex;
 use serde::Serialize;
 
@@ -18,6 +19,8 @@ pub struct TraceReport {
     pub tests: usize,
     /// Tests that couldn't be run on their own.
     pub alone_failed: Vec<String>,
+    /// Whether any test's files differ from the last trace.
+    pub changed: bool,
 }
 
 fn node(map: &Map, r: &Runner) -> Command {
@@ -84,12 +87,16 @@ fn executed(cov_dir: &Path, root: &Path) -> BTreeSet<String> {
     out
 }
 
-pub fn trace(map: &Map, jobs: usize, progress: &(dyn Fn(usize, usize) + Sync)) -> Result<TraceReport> {
+/// Stops between tests when `stop` is set, and then writes nothing.
+pub fn trace(map: &Map, jobs: usize, stop: &AtomicBool, progress: &(dyn Fn(usize, usize) + Sync)) -> Result<TraceReport> {
     std::fs::create_dir_all(map.store_path.parent().unwrap())?;
     let mut work: Vec<(&Runner, PathBuf, String)> = Vec::new();
     for r in map.runners.iter().filter(|r| r.traced()) {
         let cwd = map.runner_cwd(r);
         for f in test_files(&cwd, r.tests.as_deref().unwrap_or("**/*.test.*")) {
+            if stop.load(Ordering::Relaxed) {
+                bail!("stopped");
+            }
             let out = node(map, r).args(["--test", "--test-reporter=tap"]).arg(&f).output().context("running node")?;
             for name in tap_names(&String::from_utf8_lossy(&out.stdout)) {
                 work.push((r, f.clone(), name));
@@ -105,7 +112,7 @@ pub fn trace(map: &Map, jobs: usize, progress: &(dyn Fn(usize, usize) + Sync)) -
             s.spawn(|| loop {
                 let i = {
                     let mut n = next.lock().unwrap();
-                    if *n >= total {
+                    if *n >= total || stop.load(Ordering::Relaxed) {
                         return;
                     }
                     *n += 1;
@@ -120,6 +127,9 @@ pub fn trace(map: &Map, jobs: usize, progress: &(dyn Fn(usize, usize) + Sync)) -
             });
         }
     });
+    if stop.load(Ordering::Relaxed) {
+        bail!("stopped");
+    }
     let mut runs: BTreeMap<String, BTreeMap<String, Vec<String>>> = BTreeMap::new();
     let mut report = TraceReport { tests: total, ..Default::default() };
     for ((r, _, name), res) in work.iter().zip(results.into_inner().unwrap()) {
@@ -129,6 +139,15 @@ pub fn trace(map: &Map, jobs: usize, progress: &(dyn Fn(usize, usize) + Sync)) -
         }
         runs.entry(r.name.clone()).or_default().insert(name.clone(), files.into_iter().collect());
     }
+    let before: Option<BTreeMap<String, BTreeMap<String, BTreeSet<String>>>> = std::fs::read_to_string(&map.traces_path)
+        .ok()
+        .and_then(|t| serde_json::from_str::<serde_json::Value>(&t).ok())
+        .and_then(|v| serde_json::from_value(v["runs"].clone()).ok());
+    let now: BTreeMap<String, BTreeMap<String, BTreeSet<String>>> = runs
+        .iter()
+        .map(|(r, tests)| (r.clone(), tests.iter().map(|(t, f)| (t.clone(), f.iter().cloned().collect())).collect()))
+        .collect();
+    report.changed = before.as_ref() != Some(&now);
     let commit = git::head(&map.root)?.sha;
     let body = serde_json::json!({ "commit": commit, "runs": runs });
     std::fs::write(&map.traces_path, serde_json::to_string_pretty(&body)? + "\n")?;

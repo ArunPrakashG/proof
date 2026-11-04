@@ -216,7 +216,7 @@ impl ProofApp {
                                 cx.notify();
                             }))
                             .child(glyph(worst, &th))
-                            .child(div().flex_1().truncate().child(name))
+                            .child(div().flex_1().min_w_0().truncate().child(name))
                             .child(mono(caps.len().to_string(), text::XS, th.text_faint))
                     },
                 )))
@@ -240,7 +240,7 @@ impl ProofApp {
                         .when(!here, |d| d.hover(move |s| s.bg(hover)))
                         .on_click(cx.listener(move |this, _, _, cx| this.go(Screen::Capability(id.clone()), cx)))
                         .child(glyph(snap.state(&c.id), &th))
-                        .child(div().flex_1().truncate().child(c.name.clone()))
+                        .child(div().flex_1().min_w_0().truncate().child(c.name.clone()))
                 }))
             }),
             Screen::Changes => {
@@ -497,7 +497,7 @@ impl ProofApp {
                     .items_center()
                     .gap(space::S3)
                     .child(settle(gpui::SharedString::from(format!("settle-{id}-{:?}", v.state)), v.state.glyph(), th.state(v.state), text::XL, 0, reduced))
-                    .child(h1(cap.name.clone()).flex_none())
+                    .child(h1(cap.name.clone()).flex_initial())
                     .when(cap.inferred, |d| d.child(inferred_tag(&th)))
                     .child(div().flex_1())
                     .when(cap.inferred, |d| {
@@ -513,7 +513,7 @@ impl ProofApp {
                     .items_center()
                     .gap(space::S3)
                     .text_color(th.text_muted)
-                    .child(sentence)
+                    .child(div().min_w_0().child(sentence))
                     .child(
                         div()
                             .flex()
@@ -554,7 +554,12 @@ impl ProofApp {
                         .flex()
                         .flex_col()
                         .gap(px(2.))
-                        .child(div().flex().child(s.name.clone()).child(div().text_color(th.text_faint).child(format!(", {}", sv.state.word()))))
+                        .child({
+                            // one text, so the state wraps along with the name
+                            let text = format!("{}, {}", s.name, sv.state.word());
+                            let faint = gpui::HighlightStyle { color: Some(th.text_faint), ..Default::default() };
+                            gpui::StyledText::new(text.clone()).with_highlights([(s.name.len()..text.len(), faint)])
+                        })
                         .child(
                             div()
                                 .flex()
@@ -566,7 +571,7 @@ impl ProofApp {
                                 .child(div().truncate().child(format!("“{}”", s.matcher.trim_start_matches('=')))),
                         ),
                 )
-                .child(mono(at, text::XS, th.text_faint).whitespace_nowrap());
+                .child(mono(at, text::XS, th.text_faint).whitespace_nowrap().flex_none());
             let mut block = div().flex().flex_col().border_b_1().border_color(th.border).child(row.border_b_0());
             if open {
                 block = block.bg(th.surface_raised).child(self.scenario_detail(snap, s, sv, &th));
@@ -910,6 +915,7 @@ impl ProofApp {
         let elapsed = run.started.elapsed().as_secs();
         let progress = match run.expected {
             Some(n) if n > 0 => format!("{}, {} of {} tests", if run.tracing { "tracing" } else { "running" }, run.seen.min(n), n),
+            _ if run.tracing => "tracing, finding the tests".to_string(),
             _ => format!("{}, {} so far", if run.tracing { "tracing" } else { "running" }, plural(run.seen, "test", "tests")),
         };
         let frac = run.expected.filter(|n| *n > 0).map(|n| (run.seen as f32 / n as f32).min(1.0));
