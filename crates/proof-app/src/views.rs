@@ -18,6 +18,10 @@ impl Render for ProofApp {
         let th = self.theme;
         let wide = window.viewport_size().width >= px(760.);
         let body: Vec<AnyElement> = match self.snap.clone() {
+            None if self.loading && self.error.is_none() => {
+                let slow = self.opened.elapsed() >= SLOW_LOAD;
+                vec![div().when(slow, |d| d.text_color(th.text_faint).child("Reading the map…")).into_any_element()]
+            }
             None => vec![self.no_map(&th, cx)],
             Some(snap) => {
                 let mut out = Vec::new();
@@ -114,6 +118,7 @@ impl ProofApp {
     fn header(&self, th: &Theme, cx: &mut Context<Self>) -> impl IntoElement {
         let (name, at) = match &self.snap {
             Some(s) => (s.map.name.clone(), format!("{} @ {}", s.head.branch.as_deref().unwrap_or("detached"), s.head.commit_label())),
+            None if self.loading => (String::new(), String::new()),
             None => (dir_name(self.map_path.parent().unwrap_or(&self.map_path)), String::new()),
         };
         let hover = th.surface_hover;

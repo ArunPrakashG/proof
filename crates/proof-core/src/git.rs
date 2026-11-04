@@ -149,11 +149,14 @@ pub fn latest_touching(root: &Path, since: &str, paths: &[String]) -> Option<(St
     if paths.is_empty() {
         return None;
     }
-    let range = format!("{since}..HEAD");
-    let mut args = vec!["log", "-1", "--format=%h%x00%s", range.as_str(), "--"];
+    // walking back from HEAD stops at the first hit; a `since..HEAD` range makes git walk all of it first
+    let mut args = vec!["log", "-1", "--format=%h%x00%s", "HEAD", "--"];
     args.extend(paths.iter().map(String::as_str));
     let out = git(root, &args).ok()?;
     let (sha, subject) = out.trim().split_once('\0')?;
+    if git(root, &["merge-base", "--is-ancestor", sha, since]).is_ok() {
+        return None;
+    }
     Some((sha.to_string(), subject.to_string()))
 }
 

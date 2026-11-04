@@ -54,6 +54,9 @@ pub fn bind_keys(cx: &mut App) {
     ]);
 }
 
+/// How long the first load can take before the window says it's reading the map.
+pub const SLOW_LOAD: Duration = Duration::from_millis(600);
+
 #[derive(Clone, Debug, PartialEq)]
 pub enum Screen {
     Map,
@@ -146,7 +149,8 @@ pub struct ProofApp {
     pub palette_focus: FocusHandle,
     pub scroll: ScrollHandle,
     sig: String,
-    loading: bool,
+    pub loading: bool,
+    pub opened: Instant,
     _tasks: Vec<Task<()>>,
 }
 
@@ -195,24 +199,45 @@ impl ProofApp {
             focus,
             scroll: ScrollHandle::new(),
             sig: String::new(),
-            loading: false,
+            loading: true,
+            opened: Instant::now(),
             _tasks: Vec::new(),
         };
         if this.palette.is_some() {
             window.focus(&this.palette_focus);
         }
-        // a first load on this thread, so the window opens with the map on it
-        match Snapshot::load(&this.map_path, this.since.clone(), true, None) {
-            Ok(s) => {
-                this.sig = signature(&this.map_path, Some(&s.map.root));
-                window.set_window_title(&format!("proof · {}", s.map.name));
-                this.snap = Some(Arc::new(s));
-            }
-            Err(e) => this.error = Some(e),
-        }
-        if let Screen::Capability(id) = &this.screen {
-            this.open_scenario = this.first_stale(id);
-        }
+        // the first load runs off the main thread, so the window opens at once even when git is slow
+        let (path, since) = (this.map_path.clone(), this.since.clone());
+        this._tasks.push(cx.spawn_in(window, async move |this, cx| {
+            let (r, sig) = cx
+                .background_executor()
+                .spawn(async move {
+                    let r = Snapshot::load(&path, since, true, None);
+                    let sig = signature(&path, r.as_ref().ok().map(|s| s.map.root.as_path()));
+                    (r, sig)
+                })
+                .await;
+            let _ = this.update_in(cx, |this, window, cx| {
+                this.loading = false;
+                this.sig = sig;
+                match r {
+                    Ok(s) => {
+                        window.set_window_title(&format!("proof · {}", s.map.name));
+                        this.snap = Some(Arc::new(s));
+                        if let Screen::Capability(id) = &this.screen {
+                            this.open_scenario = this.first_stale(id);
+                        }
+                    }
+                    Err(e) => this.error = Some(e),
+                }
+                cx.notify();
+            });
+        }));
+        // a slow first load says so, after a beat
+        this._tasks.push(cx.spawn(async move |this, cx| {
+            cx.background_executor().timer(SLOW_LOAD).await;
+            let _ = this.update(cx, |_, cx| cx.notify());
+        }));
         cx.observe_window_appearance(window, |this, window, cx| {
             if !this.theme_forced {
                 let light = matches!(window.appearance(), WindowAppearance::Light | WindowAppearance::VibrantLight);
