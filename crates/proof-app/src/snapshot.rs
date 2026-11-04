@@ -21,8 +21,8 @@ pub struct Snapshot {
     pub runtimes: HashMap<String, String>,
     /// (commit, path) -> lines (added, removed) from that commit to now, for stale scenarios
     pub stale_lines: HashMap<(String, String), (u32, u32)>,
-    /// commit -> the newest commit since it that touched its stale files
-    pub latest: HashMap<String, (String, String)>,
+    /// (commit, a stale scenario's changed files, sorted) -> the newest commit since then that touched them
+    pub latest: HashMap<(String, Vec<String>), (String, String)>,
     /// short sha -> subject, for commits named on screen
     pub subjects: HashMap<String, String>,
     /// how many files are source
@@ -54,22 +54,27 @@ impl Snapshot {
 
         // what changed under each stale scenario, measured from the commit its evidence came from
         let mut by_commit: HashMap<String, Vec<String>> = HashMap::new();
+        let mut per_scenario = std::collections::BTreeSet::new();
         for v in verdicts.values() {
             for s in v.scenarios.iter().filter(|s| s.state == State::Stale) {
                 let commit = s.entry.as_ref().map(|e| e.commit.trim_end_matches("+dirty").to_string()).unwrap_or_default();
-                by_commit.entry(commit).or_default().extend(s.changed.iter().cloned());
+                by_commit.entry(commit.clone()).or_default().extend(s.changed.iter().cloned());
+                per_scenario.insert(latest_key(&commit, &s.changed));
             }
         }
         let mut stale_lines = HashMap::new();
-        let mut latest = HashMap::new();
         for (commit, mut files) in by_commit {
             files.sort();
             files.dedup();
             if let Ok(lines) = git::numstat(&map.root, &commit, &files) {
                 stale_lines.extend(lines.into_iter().map(|(p, l)| ((commit.clone(), p), l)));
             }
-            if let Some(l) = git::latest_touching(&map.root, &commit, &files) {
-                latest.insert(commit, l);
+        }
+        // per scenario, so its "Latest" commit touched its own files, not another scenario's
+        let mut latest = HashMap::new();
+        for key in per_scenario {
+            if let Some(l) = git::latest_touching(&map.root, &key.0, &key.1) {
+                latest.insert(key, l);
             }
         }
         let mut subjects = HashMap::new();
@@ -95,6 +100,13 @@ impl Snapshot {
         self.verdicts.get(cap_id).map(|v| v.state).unwrap_or(State::Unverified)
     }
 
+}
+
+/// The key into `Snapshot::latest` for a stale scenario.
+pub fn latest_key(commit: &str, changed: &[String]) -> (String, Vec<String>) {
+    let mut files = changed.to_vec();
+    files.sort();
+    (commit.to_string(), files)
 }
 
 /// Uncommitted changes when there are any, otherwise the last commit.

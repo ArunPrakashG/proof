@@ -9,7 +9,7 @@ use gpui::{
 use proof_core::{file_name, source_label, MapError, State};
 
 use crate::app::*;
-use crate::snapshot::{dir_name, Snapshot};
+use crate::snapshot::{dir_name, latest_key, Snapshot};
 use crate::theme::{radius, space, text, Theme, MONO, SANS};
 use crate::ui::*;
 
@@ -667,7 +667,7 @@ impl ProofApp {
                 rows.sort_by_key(|r| std::cmp::Reverse(r.1 + r.2));
                 d.child(format!("Changed since {commit}, in the {} this scenario claims:", plural(rows.len(), "file", "files")))
                     .child(diff_box(rows, th))
-                    .children(snap.latest.get(&commit).map(|(sha, subject)| {
+                    .children(snap.latest.get(&latest_key(&commit, &sv.changed)).map(|(sha, subject)| {
                         div().flex().gap(px(6.)).child("Latest:").child(mono(sha.clone(), text::S, th.text)).child(div().truncate().child(subject.clone()))
                     }))
             }
