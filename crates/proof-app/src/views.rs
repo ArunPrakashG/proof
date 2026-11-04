@@ -29,6 +29,7 @@ impl Render for ProofApp {
                     Screen::Capability(id) => self.cap_screen(&snap, &id, &th, cx),
                     Screen::Changes => self.changes_screen(&snap, &th, cx),
                     Screen::Runners => self.runners_screen(&snap, &th, cx),
+                    Screen::Unclaimed => self.unclaimed_screen(&snap, &th, cx),
                 });
                 out
             }
@@ -43,6 +44,7 @@ impl Render for ProofApp {
             .on_action(cx.listener(Self::go_map))
             .on_action(cx.listener(Self::go_changes))
             .on_action(cx.listener(Self::go_runners))
+            .on_action(cx.listener(Self::go_unclaimed))
             .on_action(cx.listener(Self::run_primary))
             .on_action(cx.listener(Self::run_all))
             .on_action(cx.listener(Self::import_log))
@@ -190,7 +192,8 @@ impl ProofApp {
             .gap(px(2.))
             .child(link("nav-map", "Map", snap.map.caps.len(), self.screen == Screen::Map || on_cap, Screen::Map, cx))
             .child(link("nav-changes", "Changes", snap.affected.files.len(), self.screen == Screen::Changes, Screen::Changes, cx))
-            .child(link("nav-runners", "Runners", snap.map.runners.len(), self.screen == Screen::Runners, Screen::Runners, cx));
+            .child(link("nav-runners", "Runners", snap.map.runners.len(), self.screen == Screen::Runners, Screen::Runners, cx))
+            .child(link("nav-unclaimed", "Unclaimed", snap.unclaimed.len(), self.screen == Screen::Unclaimed, Screen::Unclaimed, cx));
 
         let heading = |t: String| div().px(px(10.)).pb(space::S1).text_size(text::XS).text_color(th.text_faint).child(t);
         let below: Option<Div> = match &self.screen {
@@ -270,7 +273,7 @@ impl ProofApp {
                         .child(div().text_size(text::XS).text_color(th.text_faint).child(s.note.clone()))
                 })))
             }
-            Screen::Runners => None,
+            Screen::Runners | Screen::Unclaimed => None,
         };
         div()
             .id("nav")
@@ -810,6 +813,67 @@ impl ProofApp {
             );
         }
         out
+    }
+
+    // ------------------------------------------------------------ Unclaimed
+
+    fn unclaimed_screen(&self, snap: &Snapshot, th: &Theme, cx: &mut Context<Self>) -> Vec<AnyElement> {
+        let th = *th;
+        let n = snap.unclaimed.len();
+        let summary = match (snap.source, n) {
+            (0, _) => "No files match the map’s source globs.".to_string(),
+            (all, 0) => format!("All {all} source files are claimed by a capability."),
+            (all, n) => format!("{} of {all} source files are claimed by a capability. {} not.", all - n, if n == 1 { "1 is".to_string() } else { format!("{n} are") }),
+        };
+        let head = div().flex().flex_col().gap(space::S3).child(h1("Unclaimed source")).child(div().text_color(th.text_muted).child(summary));
+        let dirs = self.unclaimed_dirs();
+        if dirs.is_empty() {
+            return vec![head.into_any_element()];
+        }
+
+        let mut rows = Vec::new();
+        for (i, (dir, files)) in dirs.into_iter().enumerate() {
+            let selected = self.selected == Some(i);
+            let names: Vec<&str> = files.iter().map(|f| file_name(f)).collect();
+            let row = list_row(gpui::SharedString::from(format!("unclaimed-{i}")), selected, &th)
+                .min_h(px(44.))
+                .py(px(6.))
+                .on_click(cx.listener(move |this, _, _, cx| {
+                    this.selected = if this.selected == Some(i) { None } else { Some(i) };
+                    cx.notify();
+                }))
+                .child(mono(format!("{dir}/"), text::S, th.text).flex_none().max_w(px(320.)).truncate())
+                .child(div().flex_1().min_w_0().truncate().text_size(text::S).text_color(th.text_faint).child(names.join(", ")))
+                .child(mono(files.len().to_string(), text::XS, th.text_faint).flex_none());
+            let mut block = div().flex().flex_col().border_b_1().border_color(th.border).child(row.border_b_0());
+            if selected {
+                let (f1, f2) = (files.clone(), files.clone());
+                block = block.bg(th.surface_raised).child(
+                    div()
+                        .flex()
+                        .flex_col()
+                        .gap(space::S3)
+                        .pt(px(2.))
+                        .pb(space::S4)
+                        .px(px(10.))
+                        .child(div().flex().flex_wrap().gap(space::S2).children(names.iter().map(|n| path_chip(n.to_string(), &th))))
+                        .child(
+                            div()
+                                .flex()
+                                .gap(space::S2)
+                                .child(
+                                    button("add-to", "Add to a capability", &th)
+                                        .child(kbd("↵", th.text_faint))
+                                        .on_click(cx.listener(move |this, _, w, cx| this.open_palette_mode(Mode::AddTo(f1.clone()), w, cx))),
+                                )
+                                .child(button("new-cap", "New capability", &th).on_click(cx.listener(move |this, _, w, cx| this.open_palette_mode(Mode::NewCap(f2.clone()), w, cx)))),
+                        ),
+                );
+            }
+            rows.push(block);
+        }
+        let list = div().flex().flex_col().child(section_head("By folder", plural(n, "file", "files"), &th)).children(rows);
+        vec![head.into_any_element(), list.into_any_element()]
     }
 
     // ------------------------------------------------------------ Runners

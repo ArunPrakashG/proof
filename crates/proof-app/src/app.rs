@@ -18,7 +18,7 @@ use proof_core::{edit, Map, MapError, State};
 use crate::snapshot::{signature, Snapshot};
 use crate::theme::Theme;
 
-actions!(proof, [OpenPalette, GoMap, GoChanges, GoRunners, RunPrimary, RunAll, ImportLog, CopyCommand, StopRun, Next, Prev, Open, Back, Quit, PageDown, PageUp, Top, Bottom]);
+actions!(proof, [OpenPalette, GoMap, GoChanges, GoRunners, GoUnclaimed, RunPrimary, RunAll, ImportLog, CopyCommand, StopRun, Next, Prev, Open, Back, Quit, PageDown, PageUp, Top, Bottom]);
 actions!(palette, [PaletteUp, PaletteDown, PaletteConfirm, PaletteClose]);
 
 pub fn bind_keys(cx: &mut App) {
@@ -28,6 +28,7 @@ pub fn bind_keys(cx: &mut App) {
         KeyBinding::new("secondary-1", GoMap, Some("ProofApp")),
         KeyBinding::new("secondary-2", GoChanges, Some("ProofApp")),
         KeyBinding::new("secondary-3", GoRunners, Some("ProofApp")),
+        KeyBinding::new("secondary-4", GoUnclaimed, Some("ProofApp")),
         KeyBinding::new("secondary-r", RunPrimary, Some("ProofApp")),
         KeyBinding::new("secondary-shift-r", RunAll, Some("ProofApp")),
         KeyBinding::new("secondary-i", ImportLog, Some("ProofApp")),
@@ -59,6 +60,7 @@ pub enum Screen {
     Capability(String),
     Changes,
     Runners,
+    Unclaimed,
 }
 
 /// What the palette is asking for.
@@ -177,6 +179,7 @@ impl ProofApp {
             screen: match opts.screen.as_deref() {
                 Some("changes") => Screen::Changes,
                 Some("runners") => Screen::Runners,
+                Some("unclaimed") => Screen::Unclaimed,
                 Some(id) if id != "map" => Screen::Capability(id.to_string()),
                 _ => Screen::Map,
             },
@@ -356,6 +359,7 @@ impl ProofApp {
             Screen::Capability(id) => snap.map.cap(id).map(|c| c.scenarios.len()).unwrap_or(0),
             Screen::Changes => snap.affected.hits.len(),
             Screen::Runners => snap.map.runners.len(),
+            Screen::Unclaimed => self.unclaimed_dirs().len(),
         }
     }
 
@@ -363,6 +367,17 @@ impl ProofApp {
     pub fn ordered_hits(&self) -> Vec<String> {
         let Some(snap) = &self.snap else { return vec![] };
         snap.affected.direct().chain(snap.affected.indirect()).map(|h| h.cap.clone()).collect()
+    }
+
+    /// Unclaimed source by directory, in the order the Unclaimed screen lists them.
+    pub fn unclaimed_dirs(&self) -> Vec<(String, Vec<String>)> {
+        let Some(snap) = &self.snap else { return vec![] };
+        let mut out: std::collections::BTreeMap<String, Vec<String>> = Default::default();
+        for f in &snap.unclaimed {
+            let dir = f.rsplit_once('/').map(|(d, _)| d).unwrap_or(".");
+            out.entry(dir.to_string()).or_default().push(f.clone());
+        }
+        out.into_iter().collect()
     }
 
     // ------------------------------------------------------------ actions
@@ -398,6 +413,9 @@ impl ProofApp {
     pub fn go_runners(&mut self, _: &GoRunners, _: &mut Window, cx: &mut Context<Self>) {
         self.go(Screen::Runners, cx);
     }
+    pub fn go_unclaimed(&mut self, _: &GoUnclaimed, _: &mut Window, cx: &mut Context<Self>) {
+        self.go(Screen::Unclaimed, cx);
+    }
 
     pub fn next(&mut self, _: &Next, _: &mut Window, cx: &mut Context<Self>) {
         let n = self.list_len();
@@ -423,7 +441,7 @@ impl ProofApp {
         cx.notify();
     }
 
-    pub fn open(&mut self, _: &Open, _: &mut Window, cx: &mut Context<Self>) {
+    pub fn open(&mut self, _: &Open, window: &mut Window, cx: &mut Context<Self>) {
         let Some(sel) = self.selected else { return };
         let Some(snap) = self.snap.clone() else { return };
         match self.screen.clone() {
@@ -445,6 +463,11 @@ impl ProofApp {
             Screen::Runners => {
                 if let Some(r) = snap.map.runners.get(sel) {
                     self.start_run(vec![r.name.clone()], cx);
+                }
+            }
+            Screen::Unclaimed => {
+                if let Some((_, files)) = self.unclaimed_dirs().into_iter().nth(sel) {
+                    self.open_palette_mode(Mode::AddTo(files), window, cx);
                 }
             }
         }
@@ -490,6 +513,7 @@ impl ProofApp {
                 Some(r) => format!("proof run --runner {}", r.name),
                 None => "proof run --stale".into(),
             },
+            Screen::Unclaimed => "proof gaps".into(),
         }
     }
 
@@ -537,6 +561,7 @@ impl ProofApp {
                 None => self.runners_needed(None),
             },
             Screen::Changes => self.affected_runners(),
+            Screen::Unclaimed => self.runners_needed(None),
         };
         self.start_run(runners, cx);
     }

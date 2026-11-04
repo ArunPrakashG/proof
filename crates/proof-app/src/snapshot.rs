@@ -23,6 +23,10 @@ pub struct Snapshot {
     pub latest: HashMap<String, (String, String)>,
     /// short sha -> subject, for commits named on screen
     pub subjects: HashMap<String, String>,
+    /// how many files are source
+    pub source: usize,
+    /// source files no capability claims, sorted
+    pub unclaimed: Vec<String>,
 }
 
 impl Snapshot {
@@ -32,6 +36,7 @@ impl Snapshot {
         let store = Store::load(&map.store_path).map_err(other)?;
         let tree = git::blobs(&map.root, None).map_err(other)?;
         let verdicts = assess(&map, &store, &tree);
+        let (source, unclaimed) = map.unclaimed(tree.keys());
         let head = git::head(&map.root).map_err(other)?;
         let since = since.unwrap_or_else(|| default_since(&map, &head));
         let affected = affected::affected(&map, since.as_deref()).map_err(other)?;
@@ -71,7 +76,7 @@ impl Snapshot {
             }
         }
 
-        Ok(Snapshot { map, store, verdicts, head, affected, since_choices, blocked_now, stale_lines, latest, subjects })
+        Ok(Snapshot { map, store, verdicts, head, affected, since_choices, blocked_now, stale_lines, latest, subjects, source, unclaimed })
     }
 
     pub fn total(&self, state: State) -> usize {

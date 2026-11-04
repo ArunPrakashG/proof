@@ -398,6 +398,18 @@ impl Map {
     pub fn runner_cwd(&self, r: &Runner) -> PathBuf {
         self.root.join(&r.cwd)
     }
+
+    /// How many of `paths` are source, and the ones no capability claims, sorted.
+    pub fn unclaimed<'a, I>(&self, paths: I) -> (usize, Vec<String>)
+    where
+        I: IntoIterator<Item = &'a String>,
+    {
+        let mut source: Vec<&String> = paths.into_iter().filter(|p| self.is_source(p)).collect();
+        source.sort();
+        let claimed = |p: &String| self.caps.iter().any(|c| c.traced.contains(p) || c.patterns.is_match(p.as_str()));
+        let orphans = source.iter().filter(|p| !claimed(p)).map(|p| (*p).clone()).collect();
+        (source.len(), orphans)
+    }
 }
 
 /// The paths an item depends on, out of `paths`: its globs, plus what its tests ran.

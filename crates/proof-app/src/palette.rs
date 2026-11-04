@@ -169,6 +169,7 @@ pub fn items(app: &ProofApp) -> Vec<Item> {
             out.push(go("Map", String::new(), "proof status", Screen::Map));
             out.push(go("Changes", plural(snap.affected.files.len(), "file", "files"), "proof affected", Screen::Changes));
             out.push(go("Runners", plural(snap.map.runners.len(), "runner", "runners"), "proof run --json", Screen::Runners));
+            out.push(go("Unclaimed source", plural(snap.unclaimed.len(), "file", "files"), "proof gaps", Screen::Unclaimed));
             if rest > 0 {
                 for c in &snap.map.caps {
                     let s = snap.state(&c.id);

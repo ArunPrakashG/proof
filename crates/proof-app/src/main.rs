@@ -38,7 +38,7 @@ impl AssetSource for Assets {
 }
 
 const USAGE: &str = "usage: proof-app [--map proof.toml] [--since REV|uncommitted] [--theme dark|light]
-                 [--screen map|changes|runners|<capability id>] [--palette QUERY] [--size WxH]";
+                 [--screen map|changes|runners|unclaimed|<capability id>] [--palette QUERY] [--size WxH]";
 
 fn main() {
     let mut args = std::env::args().skip(1);

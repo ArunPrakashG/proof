@@ -562,22 +562,15 @@ fn affected_cmd(map: &Map, since: Option<&str>, json: bool, md: bool, p: &Paint)
 
 fn gaps(map: &Map, json: bool, p: &Paint) -> Result<ExitCode> {
     let tree = git::blobs(&map.root, None)?;
-    let paths: Vec<&String> = tree.keys().collect();
-    let mut claimed = std::collections::BTreeSet::new();
-    for c in &map.caps {
-        claimed.extend(proof_core::map::owns(&c.patterns, &c.traced, paths.iter().copied()));
-    }
-    let mut source: Vec<&String> = paths.iter().copied().filter(|p| map.is_source(p)).collect();
-    source.sort();
-    let orphans: Vec<&String> = source.iter().copied().filter(|p| !claimed.contains(*p)).collect();
+    let (source, orphans) = map.unclaimed(tree.keys());
     if json {
-        println!("{}", serde_json::to_string_pretty(&json!({"source": source.len(), "unclaimed": orphans}))?);
+        println!("{}", serde_json::to_string_pretty(&json!({"source": source, "unclaimed": orphans}))?);
         return Ok(ExitCode::SUCCESS);
     }
-    println!("{} of {} source files are claimed by a capability; {} are not:", source.len() - orphans.len(), source.len(), orphans.len());
+    println!("{} of {} source files are claimed by a capability; {} are not:", source - orphans.len(), source, orphans.len());
     let mut by_dir: std::collections::BTreeMap<&str, Vec<&str>> = Default::default();
     for o in &orphans {
-        let (dir, name) = o.rsplit_once('/').unwrap_or((".", o));
+        let (dir, name) = o.rsplit_once('/').unwrap_or((".", o.as_str()));
         by_dir.entry(dir).or_default().push(name);
     }
     for (dir, names) in by_dir {
