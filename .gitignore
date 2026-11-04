@@ -1,0 +1,4 @@
+/target
+/examples/*/work
+/examples/*/.proof/logs
+/examples/*/.proof/cov-*

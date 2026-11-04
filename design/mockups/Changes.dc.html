@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>proof · Changes</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="/_blob/827aa23fd4fdcd62dbf3cfe0f7745b39">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&amp;family=Geist+Mono:wght@400;500;600&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div class="proof-root theme-{{theme}}" style="min-height: 100vh; display: flex; flex-direction: column">
+
+<header style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap; min-height: 48px; padding: 6px 16px; border-bottom: 1px solid var(--color-border); box-sizing: border-box">
+<svg width="20" height="20" viewBox="0 0 32 32" fill="none" role="img" aria-label="proof"><rect x="2" y="2" width="28" height="28" rx="8" stroke="var(--color-text)" stroke-width="3"></rect><path d="M9.5 16.5l4.5 4.5 8.5-9.5" stroke="var(--color-success)" stroke-width="3.25" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+<span style="font-weight: 500">Example App</span>
+<span style="font-family: var(--font-mono); font-size: var(--text-s); color: var(--color-text-faint)">main @ 7c6eb24</span>
+<span style="flex: 1 1 0"></span>
+<a href="Palette.dc.html" class="btn" style="display: inline-flex; align-items: center; gap: 8px; height: 32px; padding: 0 10px; flex: 0 1 300px; min-width: 180px; box-sizing: border-box; border: 1px solid var(--color-border); border-radius: var(--radius-m); background: var(--color-surface-sunken); color: var(--color-text-faint); font-size: var(--text-s)"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="7" cy="7" r="4.5" stroke="currentColor" stroke-width="1.5"></circle><path d="M10.5 10.5L14 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path></svg><span style="flex: 1">Find or run</span><kbd style="font-family: var(--font-mono); font-size: var(--text-xs)">⌘K</kbd></a>
+</header>
+
+<div style="display: flex; flex-wrap: wrap; flex: 1">
+
+<nav aria-label="Project" style="flex: 1 1 220px; display: flex; flex-direction: column; gap: 24px; padding: 16px 12px; border-right: 1px solid var(--color-border); box-sizing: border-box">
+<div style="display: flex; flex-direction: column; gap: 2px">
+<a href="Map.dc.html" class="row" style="display: flex; align-items: center; gap: 10px; height: 32px; padding: 0 10px; border-radius: var(--radius-m); color: var(--color-text-muted)"><span style="flex: 1">Map</span><span style="font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-text-faint)">33</span></a>
+<a href="Changes.dc.html" aria-current="page" class="row" style="display: flex; align-items: center; gap: 10px; height: 32px; padding: 0 10px; border-radius: var(--radius-m); background: var(--color-surface-hover)"><span style="flex: 1">Changes</span><span style="font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-text-faint)">21</span></a>
+<a href="States.dc.html" class="row" style="display: flex; align-items: center; gap: 10px; height: 32px; padding: 0 10px; border-radius: var(--radius-m); color: var(--color-text-muted)"><span style="flex: 1">Runners</span><span style="font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-text-faint)">4</span></a>
+</div>
+<div style="display: flex; flex-direction: column; gap: 2px">
+<span style="padding: 0 10px 6px; font-size: var(--text-xs); color: var(--color-text-faint)">Since</span>
+<button type="button" class="row" style="display: flex; flex-direction: column; align-items: flex-start; gap: 2px; padding: 8px 10px; border: 0; border-radius: var(--radius-m); background: var(--color-accent-subtle); color: var(--color-text); font: inherit; text-align: left; cursor: pointer"><span style="font-family: var(--font-mono); font-size: var(--text-s)">35a8307</span><span style="font-size: var(--text-xs); color: var(--color-text-muted)">2 commits ago</span></button>
+<button type="button" class="row" style="display: flex; flex-direction: column; align-items: flex-start; gap: 2px; padding: 8px 10px; border: 0; border-radius: var(--radius-m); background: transparent; color: var(--color-text-muted); font: inherit; text-align: left; cursor: pointer"><span style="font-family: var(--font-mono); font-size: var(--text-s)">94349a4</span><span style="font-size: var(--text-xs); color: var(--color-text-faint)">last CI run</span></button>
+<button type="button" class="row" style="display: flex; flex-direction: column; align-items: flex-start; gap: 2px; padding: 8px 10px; border: 0; border-radius: var(--radius-m); background: transparent; color: var(--color-text-muted); font: inherit; text-align: left; cursor: pointer"><span style="font-size: var(--text-s)">Uncommitted</span><span style="font-size: var(--text-xs); color: var(--color-text-faint)">working tree</span></button>
+</div>
+</nav>
+
+<main style="flex: 999 1 560px; min-width: 0; padding: clamp(20px, 3vw, 40px) clamp(16px, 3vw, 48px) 64px; box-sizing: border-box">
+<div style="max-width: 960px; margin: 0 auto; display: flex; flex-direction: column; gap: 40px">
+
+<div style="display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap">
+<h1 style="margin: 0; font-size: var(--text-xl); font-weight: 500; flex: 1 1 auto">Changes since 35a8307</h1>
+<button class="btn btn-primary" type="button" style="display: inline-flex; align-items: center; gap: 8px; height: 32px; padding: 0 12px; border: 0; border-radius: var(--radius-m); background: var(--color-accent); color: var(--color-accent-text); font: inherit; font-weight: 500">Run 9 affected<kbd style="font-family: var(--font-mono); font-size: var(--text-xs); opacity: 0.75">⌘⇧R</kbd></button>
+</div>
+<span style="color: var(--color-text-muted)">21 files in 2 commits. 6 are source: they hit 2 capabilities directly and run inside 7 more.</span>
+</div>
+
+<section aria-labelledby="h-direct" style="display: flex; flex-direction: column">
+<div style="display: flex; align-items: baseline; gap: 12px; padding: 0 10px 8px; border-bottom: 1px solid var(--color-border)">
+<h2 id="h-direct" style="margin: 0; font-size: var(--text-m); font-weight: 500; flex: 1">Hit directly</h2>
+<span style="font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-text-faint)">2</span>
+</div>
+<sc-for list="{{direct}}" as="c" hint-placeholder-count="2">
+<a href="Capability.dc.html" class="row" style="display: grid; grid-template-columns: 20px minmax(0, 1fr) auto; gap: 12px; align-items: center; min-height: 44px; padding: 6px 10px; box-sizing: border-box; border-bottom: 1px solid var(--color-border)">
+<span aria-hidden="true" style="font-family: var(--font-mono); font-weight: 600; text-align: center; color: {{c.color}}">{{c.glyph}}</span>
+<span style="display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; min-width: 0"><span style="color: var(--color-text-faint)">{{c.group}} ›</span><span>{{c.name}}</span><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">, {{c.word}}</span></span>
+<code style="font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-text-muted)">{{c.files}}</code>
+</a>
+</sc-for>
+</section>
+
+<section aria-labelledby="h-owner" style="display: flex; flex-direction: column; gap: 0">
+<div style="display: flex; align-items: baseline; gap: 12px; padding: 0 10px 8px; border-bottom: 1px solid var(--color-border)">
+<h2 id="h-owner" style="margin: 0; font-size: var(--text-m); font-weight: 500; flex: 1">No capability owns these</h2>
+<span style="font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-text-faint)">4</span>
+</div>
+<div style="display: flex; flex-direction: column; gap: 16px; padding: 16px 10px; border-bottom: 1px solid var(--color-border); background: var(--color-surface-raised)">
+<div style="display: flex; align-items: flex-start; gap: 16px; flex-wrap: wrap">
+<span style="flex: 1 1 360px; display: flex; flex-direction: column; gap: 4px">
+<span>A quarter of all tests run these, on the way to something else. Likely a capability the map doesn’t have yet.</span>
+<span style="font-size: var(--text-s); color: var(--color-text-faint)">From <span style="font-family: var(--font-mono)">fe9fb48</span> An extra life for watching an ad on the website</span>
+</span>
+<span style="display: flex; gap: 8px; flex-wrap: wrap">
+<button class="btn" type="button" style="height: 32px; padding: 0 12px; border: 1px solid var(--color-border); border-radius: var(--radius-m); background: transparent; color: var(--color-text); font: inherit">Add to a capability</button>
+<button class="btn" type="button" style="height: 32px; padding: 0 12px; border: 1px solid var(--color-border-strong); border-radius: var(--radius-m); background: var(--color-surface); color: var(--color-text); font: inherit">New capability</button>
+</span>
+</div>
+<div style="display: flex; flex-direction: column; gap: 4px; padding: 10px 12px; border-radius: var(--radius-m); background: var(--color-surface-sunken); border: 1px solid var(--color-border); font-family: var(--font-mono); font-size: var(--text-s); overflow-x: auto">
+<sc-for list="{{owned}}" as="f" hint-placeholder-count="4">
+<div style="display: flex; gap: 16px; white-space: nowrap"><span style="flex: 1">{{f.path}}</span><span style="color: var(--color-success); width: 36px; text-align: right">{{f.add}}</span><span style="color: var(--color-danger); width: 36px; text-align: right">{{f.del}}</span></div>
+</sc-for>
+</div>
+</div>
+</section>
+
+<section aria-labelledby="h-indirect" style="display: flex; flex-direction: column">
+<div style="display: flex; align-items: baseline; gap: 12px; padding: 0 10px 8px; border-bottom: 1px solid var(--color-border)">
+<h2 id="h-indirect" style="margin: 0; font-size: var(--text-m); font-weight: 500; flex: 1">Run the changed code</h2>
+<span style="font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-text-faint)">7 · via shared app files</span>
+</div>
+<sc-for list="{{indirect}}" as="c" hint-placeholder-count="7">
+<a href="Capability.dc.html" class="row" style="display: grid; grid-template-columns: 20px minmax(0, 1fr); gap: 12px; align-items: center; min-height: 40px; padding: 6px 10px; box-sizing: border-box; border-bottom: 1px solid var(--color-border); color: var(--color-text-muted)">
+<span aria-hidden="true" style="font-family: var(--font-mono); font-weight: 600; text-align: center; color: {{c.color}}">{{c.glyph}}</span>
+<span style="display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; min-width: 0"><span style="color: var(--color-text-faint)">{{c.group}} ›</span><span>{{c.name}}</span><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">, {{c.word}}</span></span>
+</a>
+</sc-for>
+</section>
+
+<span style="font-size: var(--text-s); color: var(--color-text-faint); padding: 0 10px">15 more files changed outside the map’s source: docs, the website, e2e tests.</span>
+
+</div>
+</main>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["dark","light"],"default":"dark"},"$preview":{"width":1440,"height":1050}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const ST = { s: ['⚠︎', 'var(--color-warning)', 'stale'], p: ['✓', 'var(--color-success)', 'passing'], m: ['?', 'var(--color-missing)', 'missing'] };
+    const row = ([s, group, name, files]) => ({ group, name, files, glyph: ST[s][0], color: ST[s][1], word: ST[s][2] });
+    return {
+      theme: this.props.theme ?? 'dark',
+      direct: [
+        ['s', 'Story runs', 'Leaderboard', 'board.rs'],
+        ['m', 'Operations', 'Seasons', 'seasons.rs']
+      ].map(row),
+      indirect: [
+        ['m', 'Story runs', 'Play a run and get paid'],
+        ['s', 'Story runs', 'Cheating is refused'],
+        ['s', 'Story runs', 'Practice pays nothing'],
+        ['p', 'The fight', 'Fights are deterministic'],
+        ['p', 'The fight', 'Combos and secret moves'],
+        ['p', 'The fight', 'Story mode'],
+        ['p', 'The fight', 'Menu and controls']
+      ].map(row),
+      owned: [
+        { path: 'apps/game/src/app/native.js', add: '+61', del: '−1' },
+        { path: 'apps/game/src/app/ads.js', add: '+24', del: '−14' },
+        { path: 'apps/game/src/app/dom.js', add: '+1', del: '−1' },
+        { path: 'apps/game/src/app/game.js', add: '+0', del: '−1' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

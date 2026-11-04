@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>proof · Map</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="/_blob/827aa23fd4fdcd62dbf3cfe0f7745b39">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&amp;family=Geist+Mono:wght@400;500;600&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div class="proof-root theme-{{theme}}" style="min-height: 100vh; display: flex; flex-direction: column">
+
+<header style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap; min-height: 48px; padding: 6px 16px; border-bottom: 1px solid var(--color-border); box-sizing: border-box">
+<svg width="20" height="20" viewBox="0 0 32 32" fill="none" role="img" aria-label="proof"><rect x="2" y="2" width="28" height="28" rx="8" stroke="var(--color-text)" stroke-width="3"></rect><path d="M9.5 16.5l4.5 4.5 8.5-9.5" stroke="var(--color-success)" stroke-width="3.25" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+<span style="font-weight: 500">Example App</span>
+<span style="font-family: var(--font-mono); font-size: var(--text-s); color: var(--color-text-faint)">main @ 7c6eb24</span>
+<span style="flex: 1 1 0"></span>
+<a href="Palette.dc.html" class="btn" style="display: inline-flex; align-items: center; gap: 8px; height: 32px; padding: 0 10px; flex: 0 1 300px; min-width: 180px; box-sizing: border-box; border: 1px solid var(--color-border); border-radius: var(--radius-m); background: var(--color-surface-sunken); color: var(--color-text-faint); font-size: var(--text-s)"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="7" cy="7" r="4.5" stroke="currentColor" stroke-width="1.5"></circle><path d="M10.5 10.5L14 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path></svg><span style="flex: 1">Find or run</span><kbd style="font-family: var(--font-mono); font-size: var(--text-xs)">⌘K</kbd></a>
+</header>
+
+<div style="display: flex; flex-wrap: wrap; flex: 1">
+
+<nav aria-label="Project" style="flex: 1 1 220px; display: flex; flex-direction: column; gap: 24px; padding: 16px 12px; border-right: 1px solid var(--color-border); box-sizing: border-box">
+<div style="display: flex; flex-direction: column; gap: 2px">
+<a href="Map.dc.html" aria-current="page" class="row" style="display: flex; align-items: center; gap: 10px; height: 32px; padding: 0 10px; border-radius: var(--radius-m); background: var(--color-surface-hover)"><span style="flex: 1">Map</span><span style="font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-text-faint)">33</span></a>
+<a href="Changes.dc.html" class="row" style="display: flex; align-items: center; gap: 10px; height: 32px; padding: 0 10px; border-radius: var(--radius-m); color: var(--color-text-muted)"><span style="flex: 1">Changes</span><span style="font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-text-faint)">21</span></a>
+<a href="States.dc.html" class="row" style="display: flex; align-items: center; gap: 10px; height: 32px; padding: 0 10px; border-radius: var(--radius-m); color: var(--color-text-muted)"><span style="flex: 1">Runners</span><span style="font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-text-faint)">4</span></a>
+</div>
+<div style="display: flex; flex-direction: column; gap: 2px">
+<span style="padding: 0 10px 6px; font-size: var(--text-xs); color: var(--color-text-faint)">Groups</span>
+<sc-for list="{{groups}}" as="g" hint-placeholder-count="6">
+<a href="#{{g.id}}" class="row" style="display: flex; align-items: center; gap: 10px; height: 30px; padding: 0 10px; border-radius: var(--radius-m); color: var(--color-text-muted)"><span aria-hidden="true" style="width: 14px; text-align: center; font-family: var(--font-mono); font-weight: 600; color: {{g.color}}">{{g.glyph}}</span><span style="flex: 1">{{g.name}}</span><span style="font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-text-faint)">{{g.count}}</span></a>
+</sc-for>
+</div>
+</nav>
+
+<main style="flex: 999 1 560px; min-width: 0; padding: clamp(20px, 3vw, 40px) clamp(16px, 3vw, 48px) 64px; box-sizing: border-box">
+<div style="max-width: 960px; margin: 0 auto; display: flex; flex-direction: column; gap: 32px">
+
+<div style="display: flex; flex-direction: column; gap: 16px">
+<div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap">
+<h1 style="margin: 0; font-size: var(--text-xl); font-weight: 500; flex: 1 1 auto">Capabilities</h1>
+<button class="btn btn-primary" type="button" style="display: inline-flex; align-items: center; gap: 8px; height: 32px; padding: 0 12px; border: 0; border-radius: var(--radius-m); background: var(--color-accent); color: var(--color-accent-text); font: inherit; font-weight: 500">Run 33 stale<kbd style="font-family: var(--font-mono); font-size: var(--text-xs); opacity: 0.75">⌘⇧R</kbd></button>
+</div>
+<div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap; justify-content: space-between">
+<div role="group" aria-label="Filter" style="display: inline-flex; padding: 2px; gap: 2px; border-radius: var(--radius-m); background: var(--color-surface-sunken); border: 1px solid var(--color-border)">
+<sc-for list="{{filters}}" as="f" hint-placeholder-count="4">
+<button type="button" aria-pressed="{{f.pressed}}" onClick="{{f.pick}}" style="display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 10px; border: 0; border-radius: var(--radius-s); background: {{f.bg}}; color: {{f.fg}}; font: inherit; font-size: var(--text-s); cursor: pointer"><span aria-hidden="true" style="font-family: var(--font-mono); font-weight: 600; color: {{f.color}}">{{f.glyph}}</span>{{f.label}}<span style="font-family: var(--font-mono); color: var(--color-text-faint)">{{f.count}}</span></button>
+</sc-for>
+</div>
+<span style="font-size: var(--text-s); color: var(--color-text-faint)"><span style="display: inline-block; font-size: var(--text-xs); padding: 0 6px; margin-right: 6px; border-radius: var(--radius-full); border: 1px dashed var(--color-border-strong); color: var(--color-text-muted)">inferred</span>All 33 mapped by an agent, none reviewed</span>
+</div>
+</div>
+
+<sc-for list="{{shown}}" as="g" hint-placeholder-count="6">
+<section id="{{g.id}}" aria-label="{{g.name}}" style="display: flex; flex-direction: column">
+<div style="display: flex; align-items: baseline; gap: 12px; padding: 0 10px 8px; border-bottom: 1px solid var(--color-border)">
+<h2 style="margin: 0; font-size: var(--text-m); font-weight: 500; flex: 1">{{g.name}}</h2>
+<span style="font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-text-faint)">{{g.summary}}</span>
+</div>
+<sc-for list="{{g.caps}}" as="c" hint-placeholder-count="4">
+<a href="Capability.dc.html" class="row" aria-label="{{c.label}}" style="display: grid; grid-template-columns: 20px minmax(0, 1fr) 48px; gap: 12px; align-items: center; min-height: 44px; padding: 6px 10px; box-sizing: border-box; border-bottom: 1px solid var(--color-border); background: {{c.bg}}; box-shadow: {{c.ring}}">
+<span aria-hidden="true" style="font-family: var(--font-mono); font-weight: 600; text-align: center; color: {{c.color}}">{{c.glyph}}</span>
+<span style="display: flex; align-items: baseline; gap: 12px; min-width: 0; flex-wrap: wrap; row-gap: 0">
+<span>{{c.name}}</span>
+<span style="font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-text-faint); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; max-width: 100%">{{c.sub}}</span>
+</span>
+<span style="font-family: var(--font-mono); font-size: var(--text-s); color: var(--color-text-muted); text-align: right">{{c.score}}</span>
+</a>
+</sc-for>
+</section>
+</sc-for>
+
+</div>
+</main>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["dark","light"],"default":"dark"},"$preview":{"width":1440,"height":2060}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { filter: 'all' };
+  }
+  renderVals() {
+    const S = {
+      p: { glyph: '✓', word: 'passing', color: 'var(--color-success)' },
+      s: { glyph: '⚠︎', word: 'stale', color: 'var(--color-warning)' },
+      m: { glyph: '?', word: 'missing', color: 'var(--color-missing)' }
+    };
+    const rank = { m: 0, s: 1, p: 2 };
+    const raw = [
+      ['accounts', 'Accounts', [
+        ['m', 'Sign in with Google', '0/4', 'evidence not found'],
+        ['s', 'Choose an in-game name', '0/3', 'changed auth.rs, names.rs'],
+        ['p', 'Profile picture', '1/1', ''],
+        ['s', 'Delete my account', '0/2', 'changed erase.rs']]],
+      ['story-runs', 'Story runs', [
+        ['m', 'Play a run and get paid', '2/5', 'evidence not found'],
+        ['s', 'Cheating is refused', '3/6', 'changed record.js, runs.rs, check.mjs'],
+        ['s', 'Practice pays nothing', '1/2', 'changed run.js, runs.rs'],
+        ['s', 'Leaderboard', '1/2', 'changed score.js, board.rs'],
+        ['s', 'Career rank', '1/2', 'changed profile.js, career.js, rank.rs'],
+        ['s', 'Inbox notes', '0/1', 'changed inbox.rs']]],
+      ['shop', 'Shop', [
+        ['s', 'Buy and equip gear', '2/4', 'changed shop.js, gear.js, catalog.json +1'],
+        ['s', 'Buy Foil packs', '0/1', 'changed dodo.rs, economy.rs']]],
+      ['versus', 'Versus', [
+        ['s', 'Ranked quick match', '2/7', 'changed client.js, lobby.rs, versus.rs'],
+        ['s', 'Nearby lobbies', '3/4', 'changed lan-lobby.js, lan.js, lobby.rs'],
+        ['m', 'One seat per account', '0/1', 'evidence not found'],
+        ['m', 'Fighters connect to each other', '0/2', 'evidence not found'],
+        ['p', 'Screens stay in sync', '4/4', '']]],
+      ['the-fight', 'The fight', [
+        ['p', 'Fights are deterministic', '7/7', ''],
+        ['p', 'Combos and secret moves', '5/5', ''],
+        ['p', 'Hits land as loud as they are', '4/4', ''],
+        ['p', 'Story mode', '3/3', ''],
+        ['p', 'Menu and controls', '4/4', ''],
+        ['p', 'Sound and music', '3/3', '']]],
+      ['operations', 'Operations', [
+        ['s', 'Admin sign-in', '0/1', 'changed admin.rs'],
+        ['s', 'Ban a player', '0/1', 'changed admin.rs, guard.rs'],
+        ['m', 'Grant Marks', '0/1', 'evidence not found'],
+        ['s', 'Moderate name reports', '0/1', 'changed names.rs, reports.rs'],
+        ['m', 'Read the support inbox', '0/1', 'evidence not found'],
+        ['s', 'Send mail', '0/2', 'changed digest.html.hbs, digest.subject.hbs +1'],
+        ['m', 'Seasons', '0/1', 'evidence not found'],
+        ['m', 'Analytics and the daily digest', '0/5', 'evidence not found'],
+        ['p', 'Spot copies of the game', '1/1', ''],
+        ['s', 'Rate limits', '0/2', 'changed guard.rs']]]
+    ];
+    const filter = this.state.filter;
+    const groups = raw.map(([id, name, caps]) => {
+      const worst = caps.reduce((w, c) => (rank[c[0]] < rank[w] ? c[0] : w), 'p');
+      const counts = ['m', 's', 'p'].map((k) => [k, caps.filter((c) => c[0] === k).length]).filter(([, n]) => n);
+      const rows = caps.map(([s, n, score, sub]) => {
+        const sel = n === 'Cheating is refused';
+        const [ok, total] = score.split('/');
+        return {
+          s, name: n, score, sub, glyph: S[s].glyph, color: S[s].color,
+          label: n + ', ' + S[s].word + ', ' + ok + ' of ' + total + ' scenarios passing',
+          bg: sel ? 'var(--color-accent-subtle)' : 'transparent',
+          ring: sel ? 'inset 2px 0 0 var(--color-accent)' : 'none'
+        };
+      });
+      return {
+        id, name, count: caps.length, glyph: S[worst].glyph, color: S[worst].color,
+        summary: counts.map(([k, n]) => n + ' ' + S[k].word).join(' · '),
+        caps: rows.filter((c) => filter === 'all' || c.s === filter)
+      };
+    });
+    const all = raw.flatMap((g) => g[2]);
+    const n = (k) => all.filter((c) => c[0] === k).length;
+    const defs = [['all', 'All', '', 'var(--color-text)', all.length], ['s', 'Stale', S.s.glyph, S.s.color, n('s')], ['m', 'Missing', '?', S.m.color, n('m')], ['p', 'Passing', S.p.glyph, S.p.color, n('p')]];
+    return {
+      theme: this.props.theme ?? 'dark',
+      groups,
+      shown: groups.filter((g) => g.caps.length),
+      filters: defs.map(([id, label, glyph, color, count]) => ({
+        label, glyph, color, count,
+        pressed: filter === id ? 'true' : 'false',
+        bg: filter === id ? 'var(--color-surface-raised)' : 'transparent',
+        fg: filter === id ? 'var(--color-text)' : 'var(--color-text-muted)',
+        pick: () => this.setState({ filter: id })
+      }))
+    };
+  }
+}
+</script>
+</body>
+</html>

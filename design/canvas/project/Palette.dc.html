@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>proof · Command palette</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="/_blob/827aa23fd4fdcd62dbf3cfe0f7745b39">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&amp;family=Geist+Mono:wght@400;500;600&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div class="proof-root theme-{{theme}}" style="position: relative; height: 100vh; min-height: 900px; overflow: hidden">
+<div aria-hidden="true" inert="" style="position: absolute; inset: 0; pointer-events: none">
+<dc-import name="Map" theme="{{theme}}" hint-size="100%,2060px"></dc-import>
+</div>
+<div style="position: absolute; inset: 0; background: var(--color-scrim)"></div>
+
+<div role="dialog" aria-modal="true" aria-label="Command palette" style="position: absolute; left: 50%; top: 96px; transform: translateX(-50%); width: min(640px, calc(100% - 32px)); display: flex; flex-direction: column; border-radius: var(--radius-l); background: var(--color-surface-raised); box-shadow: var(--shadow-2); overflow: hidden">
+<label style="display: flex; align-items: center; gap: 10px; height: 52px; padding: 0 16px; border-bottom: 1px solid var(--color-border)">
+<svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true" style="color: var(--color-text-faint); flex-shrink: 0"><circle cx="7" cy="7" r="4.5" stroke="currentColor" stroke-width="1.5"></circle><path d="M10.5 10.5L14 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path></svg>
+<span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Find a capability or run a command</span>
+<input type="text" value="{{query}}" onChange="{{onQuery}}" onKeyDown="{{onKey}}" placeholder="Find a capability or run a command" autocomplete="off" spellcheck="false" style="flex: 1; min-width: 0; height: 100%; border: 0; outline: none; background: transparent; color: var(--color-text); font: inherit; font-size: var(--text-m)">
+<kbd style="font-family: var(--font-mono); font-size: var(--text-xs); padding: 2px 6px; border-radius: var(--radius-s); border: 1px solid var(--color-border-strong); color: var(--color-text-faint)">esc</kbd>
+</label>
+
+<div role="listbox" aria-label="Results" style="display: flex; flex-direction: column; padding: 6px; max-height: 420px; overflow-y: auto">
+<sc-for list="{{sections}}" as="sec" hint-placeholder-count="2">
+<span style="padding: 10px 10px 4px; font-size: var(--text-xs); color: var(--color-text-faint)">{{sec.title}}</span>
+<sc-for list="{{sec.items}}" as="it" hint-placeholder-count="4">
+<button type="button" role="option" aria-selected="{{it.selected}}" onClick="{{it.pick}}" style="display: grid; grid-template-columns: 20px minmax(0, 1fr) auto; gap: 12px; align-items: center; min-height: 40px; padding: 6px 10px; border: 0; border-radius: var(--radius-m); background: {{it.bg}}; color: var(--color-text); font: inherit; text-align: left; cursor: pointer">
+<span aria-hidden="true" style="font-family: var(--font-mono); font-weight: 600; text-align: center; color: {{it.color}}">{{it.glyph}}</span>
+<span style="display: flex; align-items: baseline; gap: 8px; min-width: 0; overflow: hidden"><span style="white-space: nowrap">{{it.label}}</span><span style="font-size: var(--text-s); color: var(--color-text-faint); white-space: nowrap">{{it.hint}}</span></span>
+<code style="font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 240px">{{it.cli}}</code>
+</button>
+</sc-for>
+</sc-for>
+<sc-if value="{{empty}}" hint-placeholder-val="{{ false }}">
+<span style="padding: 24px 10px; color: var(--color-text-muted); text-align: center">Nothing matches. Try a capability, group or runner name.</span>
+</sc-if>
+</div>
+
+<div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap; padding: 10px 16px; border-top: 1px solid var(--color-border); font-size: var(--text-xs); color: var(--color-text-faint)">
+<span><kbd style="font-family: var(--font-mono)">↑↓</kbd> select</span>
+<span><kbd style="font-family: var(--font-mono)">↵</kbd> run</span>
+<span><kbd style="font-family: var(--font-mono)">⌘⇧C</kbd> copy command</span>
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["dark","light"],"default":"dark"},"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { query: 'run ', sel: 0 };
+  }
+  renderVals() {
+    const W = '⚠︎';
+    const all = [
+      { sec: 'Run', glyph: W, color: 'var(--color-warning)', label: 'Run Cheating is refused', hint: '3 stale', cli: 'proof run "cheating is refused"' },
+      { sec: 'Run', glyph: W, color: 'var(--color-warning)', label: 'Run Story runs', hint: '5 capabilities', cli: 'proof run "story runs"' },
+      { sec: 'Run', glyph: '▶', color: 'var(--color-text-muted)', label: 'Run everything stale', hint: '33 scenarios', cli: 'proof run' },
+      { sec: 'Run', glyph: '▶', color: 'var(--color-text-muted)', label: 'Run the e2e runner', hint: 'bash tests/e2e/e2e.sh', cli: 'proof run --runner e2e' },
+      { sec: 'Evidence', glyph: '↓', color: 'var(--color-text-muted)', label: 'Import a CI log', hint: 'e2e, api, replay', cli: 'proof import <runner> <log>' },
+      { sec: 'Evidence', glyph: '↻', color: 'var(--color-text-muted)', label: 'Trace which code each test runs', hint: 'about 2 min', cli: 'proof trace' },
+      { sec: 'Go to', glyph: '→', color: 'var(--color-text-muted)', label: 'Map', hint: '', cli: 'proof status' },
+      { sec: 'Go to', glyph: '→', color: 'var(--color-text-muted)', label: 'Changes', hint: '21 files', cli: 'proof affected' },
+      { sec: 'Go to', glyph: '→', color: 'var(--color-text-muted)', label: 'Unclaimed source', hint: '', cli: 'proof gaps' }
+    ];
+    const q = this.state.query.trim().toLowerCase();
+    const hits = q ? all.filter((x) => (x.label + ' ' + x.hint + ' ' + x.cli).toLowerCase().includes(q)) : all;
+    const sel = Math.min(this.state.sel, Math.max(hits.length - 1, 0));
+    const order = ['Run', 'Evidence', 'Go to'];
+    const sections = order.map((title) => ({
+      title,
+      items: hits.filter((x) => x.sec === title).map((x) => {
+        const i = hits.indexOf(x);
+        return { ...x, selected: i === sel ? 'true' : 'false', bg: i === sel ? 'var(--color-accent-subtle)' : 'transparent', pick: () => this.setState({ sel: i }) };
+      })
+    })).filter((s) => s.items.length);
+    return {
+      theme: this.props.theme ?? 'dark',
+      query: this.state.query,
+      sections,
+      empty: hits.length === 0,
+      onQuery: (e) => this.setState({ query: e.target.value, sel: 0 }),
+      onKey: (e) => {
+        if (e.key === 'ArrowDown') { e.preventDefault(); this.setState({ sel: Math.min(sel + 1, hits.length - 1) }); }
+        if (e.key === 'ArrowUp') { e.preventDefault(); this.setState({ sel: Math.max(sel - 1, 0) }); }
+      }
+    };
+  }
+}
+</script>
+</body>
+</html>

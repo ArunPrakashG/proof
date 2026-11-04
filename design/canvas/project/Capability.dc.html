@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>proof · Cheating is refused</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="/_blob/827aa23fd4fdcd62dbf3cfe0f7745b39">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&amp;family=Geist+Mono:wght@400;500;600&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div class="proof-root theme-{{theme}}" style="min-height: 100vh; display: flex; flex-direction: column">
+
+<header style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap; min-height: 48px; padding: 6px 16px; border-bottom: 1px solid var(--color-border); box-sizing: border-box">
+<svg width="20" height="20" viewBox="0 0 32 32" fill="none" role="img" aria-label="proof"><rect x="2" y="2" width="28" height="28" rx="8" stroke="var(--color-text)" stroke-width="3"></rect><path d="M9.5 16.5l4.5 4.5 8.5-9.5" stroke="var(--color-success)" stroke-width="3.25" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+<span style="font-weight: 500">Example App</span>
+<span style="font-family: var(--font-mono); font-size: var(--text-s); color: var(--color-text-faint)">main @ 7c6eb24</span>
+<span style="flex: 1 1 0"></span>
+<a href="Palette.dc.html" class="btn" style="display: inline-flex; align-items: center; gap: 8px; height: 32px; padding: 0 10px; flex: 0 1 300px; min-width: 180px; box-sizing: border-box; border: 1px solid var(--color-border); border-radius: var(--radius-m); background: var(--color-surface-sunken); color: var(--color-text-faint); font-size: var(--text-s)"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="7" cy="7" r="4.5" stroke="currentColor" stroke-width="1.5"></circle><path d="M10.5 10.5L14 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path></svg><span style="flex: 1">Find or run</span><kbd style="font-family: var(--font-mono); font-size: var(--text-xs)">⌘K</kbd></a>
+</header>
+
+<div style="display: flex; flex-wrap: wrap; flex: 1">
+
+<nav aria-label="Project" style="flex: 1 1 220px; display: flex; flex-direction: column; gap: 24px; padding: 16px 12px; border-right: 1px solid var(--color-border); box-sizing: border-box">
+<div style="display: flex; flex-direction: column; gap: 2px">
+<a href="Map.dc.html" class="row" style="display: flex; align-items: center; gap: 10px; height: 32px; padding: 0 10px; border-radius: var(--radius-m); background: var(--color-surface-hover)"><span style="flex: 1">Map</span><span style="font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-text-faint)">33</span></a>
+<a href="Changes.dc.html" class="row" style="display: flex; align-items: center; gap: 10px; height: 32px; padding: 0 10px; border-radius: var(--radius-m); color: var(--color-text-muted)"><span style="flex: 1">Changes</span><span style="font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-text-faint)">21</span></a>
+<a href="States.dc.html" class="row" style="display: flex; align-items: center; gap: 10px; height: 32px; padding: 0 10px; border-radius: var(--radius-m); color: var(--color-text-muted)"><span style="flex: 1">Runners</span><span style="font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-text-faint)">4</span></a>
+</div>
+<div style="display: flex; flex-direction: column; gap: 2px">
+<span style="padding: 0 10px 6px; font-size: var(--text-xs); color: var(--color-text-faint)">Story runs</span>
+<sc-for list="{{siblings}}" as="s" hint-placeholder-count="6">
+<a href="Capability.dc.html" class="row" aria-current="{{s.current}}" style="display: flex; align-items: center; gap: 10px; min-height: 30px; padding: 4px 10px; box-sizing: border-box; border-radius: var(--radius-m); color: {{s.fg}}; background: {{s.bg}}"><span aria-hidden="true" style="width: 14px; text-align: center; font-family: var(--font-mono); font-weight: 600; color: {{s.color}}">{{s.glyph}}</span><span style="flex: 1">{{s.name}}</span></a>
+</sc-for>
+</div>
+</nav>
+
+<main style="flex: 999 1 560px; min-width: 0; padding: clamp(20px, 3vw, 40px) clamp(16px, 3vw, 48px) 64px; box-sizing: border-box">
+<div style="max-width: 960px; margin: 0 auto; display: flex; flex-direction: column; gap: 40px">
+
+<div style="display: flex; flex-direction: column; gap: 12px">
+<nav aria-label="Breadcrumb" style="font-size: var(--text-s); color: var(--color-text-faint)"><a href="Map.dc.html" style="color: var(--color-text-muted)">Story runs</a> ›</nav>
+<div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap">
+<span aria-hidden="true" class="settle" style="font-family: var(--font-mono); font-size: var(--text-xl); font-weight: 600; color: var(--color-warning)">⚠︎</span>
+<h1 style="margin: 0; font-size: var(--text-xl); font-weight: 500">Cheating is refused</h1>
+<span style="font-size: var(--text-xs); padding: 1px 6px; border-radius: var(--radius-full); border: 1px dashed var(--color-border-strong); color: var(--color-text-muted)">inferred</span>
+<span style="flex: 1 1 auto"></span>
+<button class="btn" type="button" style="height: 32px; padding: 0 12px; border: 1px solid var(--color-border); border-radius: var(--radius-m); background: transparent; color: var(--color-text); font: inherit">Mark reviewed</button>
+<button class="btn btn-primary" type="button" style="display: inline-flex; align-items: center; gap: 8px; height: 32px; padding: 0 12px; border: 0; border-radius: var(--radius-m); background: var(--color-accent); color: var(--color-accent-text); font: inherit; font-weight: 500">Run 3 stale<kbd style="font-family: var(--font-mono); font-size: var(--text-xs); opacity: 0.75">⌘R</kbd></button>
+</div>
+<div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap; color: var(--color-text-muted)">
+<span>Stale. 3 scenarios passed on code that has changed since.</span>
+<span style="flex: 1 1 auto"></span>
+<code style="font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-text-faint)">story-runs/cheating-is-refused</code>
+<button class="btn" type="button" aria-label="Copy as CLI command" style="display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; padding: 0; border: 1px solid transparent; border-radius: var(--radius-m); background: transparent; color: var(--color-text-muted)"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 4l3 3-3 3M8 11h5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg></button>
+</div>
+</div>
+
+<section aria-labelledby="h-scen" style="display: flex; flex-direction: column">
+<div style="display: flex; align-items: baseline; gap: 12px; padding: 0 10px 8px; border-bottom: 1px solid var(--color-border)">
+<h2 id="h-scen" style="margin: 0; font-size: var(--text-m); font-weight: 500; flex: 1">Scenarios</h2>
+<span style="font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-text-faint)">3 stale · 3 passing</span>
+</div>
+<sc-for list="{{scenarios}}" as="s" hint-placeholder-count="6">
+<div style="display: flex; flex-direction: column; border-bottom: 1px solid var(--color-border); background: {{s.bg}}">
+<div class="row" style="display: grid; grid-template-columns: 20px minmax(0, 1fr) auto; gap: 12px; align-items: center; min-height: 52px; padding: 8px 10px; box-sizing: border-box">
+<span aria-hidden="true" style="font-family: var(--font-mono); font-weight: 600; text-align: center; color: {{s.color}}">{{s.glyph}}</span>
+<span style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
+<span>{{s.name}}<span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">, {{s.word}}</span></span>
+<span style="font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-text-faint); overflow: hidden; text-overflow: ellipsis; white-space: nowrap"><span style="color: var(--color-text-muted)">{{s.runner}}</span>  “{{s.test}}”</span>
+</span>
+<span style="font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-text-faint); text-align: right; white-space: nowrap">{{s.at}}</span>
+</div>
+<sc-if value="{{s.open}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column; gap: 10px; padding: 4px 10px 16px 42px">
+<span style="font-size: var(--text-s); color: var(--color-text-muted)">Changed since 94349a4, in the 3 files this scenario claims:</span>
+<div style="display: flex; flex-direction: column; gap: 4px; padding: 10px 12px; border-radius: var(--radius-m); background: var(--color-surface-sunken); border: 1px solid var(--color-border); font-family: var(--font-mono); font-size: var(--text-s); overflow-x: auto">
+<sc-for list="{{changed}}" as="f" hint-placeholder-count="3">
+<div style="display: flex; gap: 16px; white-space: nowrap"><span style="flex: 1; color: var(--color-text)">{{f.path}}</span><span style="color: var(--color-success); width: 44px; text-align: right">{{f.add}}</span><span style="color: var(--color-danger); width: 36px; text-align: right">{{f.del}}</span></div>
+</sc-for>
+</div>
+<span style="font-size: var(--text-s); color: var(--color-text-faint)">Latest: <span style="font-family: var(--font-mono)">7999c1a</span> An extra life in the Gauntlet, for watching an ad</span>
+</div>
+</sc-if>
+</div>
+</sc-for>
+</section>
+
+<section aria-labelledby="h-claims" style="display: flex; flex-direction: column; gap: 16px">
+<div style="display: flex; align-items: baseline; gap: 12px; padding: 0 10px 8px; border-bottom: 1px solid var(--color-border)">
+<h2 id="h-claims" style="margin: 0; font-size: var(--text-m); font-weight: 500; flex: 1">Code it claims</h2>
+<span style="font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-text-faint)">3 named · 90 traced</span>
+</div>
+<div style="display: flex; flex-direction: column; gap: 16px; padding: 0 10px">
+<div style="display: flex; gap: 8px; flex-wrap: wrap">
+<code style="font-family: var(--font-mono); font-size: var(--text-s); padding: 2px 6px; border-radius: var(--radius-s); background: var(--color-surface-sunken); border: 1px solid var(--color-border); color: var(--color-text-muted)">services/api/src/runs.rs</code>
+<code style="font-family: var(--font-mono); font-size: var(--text-s); padding: 2px 6px; border-radius: var(--radius-s); background: var(--color-surface-sunken); border: 1px solid var(--color-border); color: var(--color-text-muted)">services/replay/check.mjs</code>
+<code style="font-family: var(--font-mono); font-size: var(--text-s); padding: 2px 6px; border-radius: var(--radius-s); background: var(--color-surface-sunken); border: 1px solid var(--color-border); color: var(--color-text-muted)">apps/game/src/sim/record.js</code>
+</div>
+<div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap">
+<span style="color: var(--color-text-muted); flex: 1 1 320px">Its tests also run 90 files. 8 of them few other tests touch, so a change there hits this capability directly. The other 82 are shared.</span>
+<button class="btn" type="button" aria-expanded="false" style="height: 32px; padding: 0 12px; border: 1px solid var(--color-border); border-radius: var(--radius-m); background: transparent; color: var(--color-text); font: inherit">Show 90 files</button>
+</div>
+</div>
+</section>
+
+</div>
+</main>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["dark","light"],"default":"dark"},"$preview":{"width":1440,"height":960}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const ST = { s: ['⚠︎', 'var(--color-warning)', 'stale'], p: ['✓', 'var(--color-success)', 'passing'], m: ['?', 'var(--color-missing)', 'missing'] };
+    const sc = [
+      ['s', 'Same run twice pays once', 'e2e', 'the same run again: refused', '94349a4 · CI · Oct 12', true],
+      ['s', 'Forged score rejected', 'e2e', 'a forged score', '94349a4 · CI · Oct 12', false],
+      ['s', 'Wrong seed or ticket refused', 'e2e', 'a record made on another seed', '94349a4 · CI · Oct 12', false],
+      ['p', 'Worker catches a claimed score', 'replay', 'a claimed score the inputs do not make', '7c6eb24 · local · today', false],
+      ['p', 'Worker catches moved inputs', 'replay', 'moved inputs are a mismatch', '7c6eb24 · local · today', false],
+      ['p', 'A tampered record does not reproduce', 'game', 'a tampered record does not reproduce', '7c6eb24 · local · today', false]
+    ];
+    const sib = [['m', 'Play a run and get paid'], ['s', 'Cheating is refused'], ['s', 'Practice pays nothing'], ['s', 'Leaderboard'], ['s', 'Career rank'], ['s', 'Inbox notes']];
+    return {
+      theme: this.props.theme ?? 'dark',
+      scenarios: sc.map(([s, name, runner, test, at, open]) => ({
+        name, runner, test, at, open, glyph: ST[s][0], color: ST[s][1], word: ST[s][2],
+        bg: open ? 'var(--color-surface-raised)' : 'transparent'
+      })),
+      changed: [
+        { path: 'services/api/src/runs.rs', add: '+148', del: '−17' },
+        { path: 'services/replay/check.mjs', add: '+22', del: '−4' },
+        { path: 'apps/game/src/sim/record.js', add: '+2', del: '−2' }
+      ],
+      siblings: sib.map(([s, name]) => {
+        const cur = name === 'Cheating is refused';
+        return { name, glyph: ST[s][0], color: ST[s][1], current: cur ? 'page' : 'false', fg: cur ? 'var(--color-text)' : 'var(--color-text-muted)', bg: cur ? 'var(--color-accent-subtle)' : 'transparent' };
+      })
+    };
+  }
+}
+</script>
+</body>
+</html>

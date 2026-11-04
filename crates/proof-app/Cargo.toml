@@ -1,0 +1,16 @@
+[package]
+name = "proof-app"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[[bin]]
+name = "proof-app"
+path = "src/main.rs"
+
+[dependencies]
+proof-core.workspace = true
+anyhow.workspace = true
+gpui = "0.2.2"
+futures = "0.3"
+time = { workspace = true, features = ["local-offset"] }

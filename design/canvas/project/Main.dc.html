@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>proof foundations</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="/_blob/827aa23fd4fdcd62dbf3cfe0f7745b39">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&amp;family=Geist+Mono:wght@400;500;600&amp;display=swap">
+<style>
+body{margin:0}
+a{color:inherit}a:hover{color:inherit}
+</style>
+</helmet>
+<div class="proof-root theme-{{theme}}" style="min-height: 100vh">
+<main style="max-width: 1200px; margin: 0 auto; padding: clamp(32px, 6vw, 80px) clamp(16px, 4vw, 48px); display: flex; flex-direction: column; gap: 80px">
+
+<header style="display: flex; flex-direction: column; gap: 24px">
+<div style="display: flex; align-items: center; gap: 12px">
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" role="img" aria-label="proof mark"><rect x="2" y="2" width="28" height="28" rx="8" stroke="var(--color-text)" stroke-width="2.5"></rect><path d="M9.5 16.5l4.5 4.5 8.5-9.5" stroke="var(--color-success)" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+<span style="font-family: var(--font-mono); font-size: 22px; font-weight: 600; letter-spacing: -0.02em">proof</span>
+</div>
+<h1 style="margin: 0; font-size: clamp(28px, 4vw, 40px); line-height: var(--leading-tight); font-weight: 500; letter-spacing: -0.02em; max-width: 820px">What your app can do, and whether it still does, at this commit.</h1>
+<dl style="margin: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 24px; padding-top: 24px; border-top: 1px solid var(--color-border)">
+<div style="display: flex; flex-direction: column; gap: 4px"><dt style="font-size: var(--text-s); color: var(--color-text-faint)">Voice</dt><dd style="margin: 0; font-size: var(--text-m)">Plain, exact, quiet.</dd></div>
+<div style="display: flex; flex-direction: column; gap: 4px"><dt style="font-size: var(--text-s); color: var(--color-text-faint)">Signature idea</dt><dd style="margin: 0; font-size: var(--text-m)">Every verdict is pinned to the code it saw. Change that code and the verdict goes stale.</dd></div>
+<div style="display: flex; flex-direction: column; gap: 4px"><dt style="font-size: var(--text-s); color: var(--color-text-faint)">Who operates it</dt><dd style="margin: 0; font-size: var(--text-m)">Your coding agent, through the CLI. You read the map.</dd></div>
+</dl>
+</header>
+
+<section aria-labelledby="h-states" style="display: flex; flex-direction: column; gap: 24px">
+<h2 id="h-states" style="margin: 0; font-size: var(--text-xl); font-weight: 500">States</h2>
+<div style="border: 1px solid var(--color-border); border-top: 0; border-radius: var(--radius-l); overflow: hidden; background: var(--color-surface-raised)">
+<sc-for list="{{states}}" as="s" hint-placeholder-count="6">
+<div class="row" style="display: grid; grid-template-columns: 32px minmax(96px, 140px) minmax(0, 1fr); gap: 16px; align-items: center; padding: 14px 20px; border-top: 1px solid var(--color-border)">
+<span aria-hidden="true" style="font-family: var(--font-mono); font-size: 16px; font-weight: 600; color: {{s.color}}; text-align: center">{{s.glyph}}</span>
+<span style="font-family: var(--font-mono); font-size: var(--text-base)">{{s.name}}</span>
+<span style="color: var(--color-text-muted)">{{s.meaning}}</span>
+</div>
+</sc-for>
+</div>
+<p style="margin: 0; color: var(--color-text-muted); max-width: 760px">A capability shows its worst scenario: failing, then missing, stale, blocked, unverified, passing. The glyph is always paired with its word, and it is the same character the CLI prints.</p>
+</section>
+
+<section aria-labelledby="h-color" style="display: flex; flex-direction: column; gap: 24px">
+<div style="display: flex; align-items: baseline; justify-content: space-between; gap: 16px; flex-wrap: wrap">
+<h2 id="h-color" style="margin: 0; font-size: var(--text-xl); font-weight: 500">Color</h2>
+<span style="font-size: var(--text-s); color: var(--color-text-faint)">dark · light</span>
+</div>
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px">
+<sc-for list="{{swatches}}" as="c" hint-placeholder-count="12">
+<div style="display: flex; gap: 12px; align-items: center; padding: 10px; border: 1px solid var(--color-border); border-radius: var(--radius-m)">
+<div style="display: flex; flex-shrink: 0; border-radius: var(--radius-s); overflow: hidden; box-shadow: 0 0 0 1px var(--color-border)">
+<span style="display: block; width: 28px; height: 40px; background: {{c.dark}}"></span>
+<span style="display: block; width: 28px; height: 40px; background: {{c.light}}"></span>
+</div>
+<div style="display: flex; flex-direction: column; min-width: 0">
+<span style="font-family: var(--font-mono); font-size: var(--text-s)">{{c.name}}</span>
+<span style="font-size: var(--text-s); color: var(--color-text-faint)">{{c.role}}</span>
+</div>
+</div>
+</sc-for>
+</div>
+<p style="margin: 0; color: var(--color-text-muted); max-width: 760px">One accent, for the primary action, selection and focus. Status hues differ in lightness as well as hue, and never carry meaning alone.</p>
+</section>
+
+<section aria-labelledby="h-type" style="display: flex; flex-direction: column; gap: 24px">
+<h2 id="h-type" style="margin: 0; font-size: var(--text-xl); font-weight: 500">Type</h2>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 32px">
+<div style="display: flex; flex-direction: column; gap: 16px">
+<span style="font-size: var(--text-s); color: var(--color-text-faint)">Geist · interface</span>
+<sc-for list="{{scale}}" as="t" hint-placeholder-count="6">
+<div style="display: flex; align-items: baseline; gap: 16px">
+<span style="font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-text-faint); width: 88px; flex-shrink: 0">{{t.name}}</span>
+<span style="font-size: {{t.size}}; line-height: var(--leading-tight); font-weight: {{t.weight}}; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{t.sample}}</span>
+</div>
+</sc-for>
+</div>
+<div style="display: flex; flex-direction: column; gap: 16px">
+<span style="font-size: var(--text-s); color: var(--color-text-faint)">Geist Mono · evidence, paths, commands</span>
+<div style="font-family: var(--font-mono); font-size: var(--text-s); line-height: 1.7; padding: 16px; border-radius: var(--radius-m); background: var(--color-surface-sunken); border: 1px solid var(--color-border); overflow-x: auto; white-space: pre; color: var(--color-text-muted)"><span style="color: var(--color-text)">$ proof show "cheating"</span>
+<span style="color: var(--color-warning)">⚠︎</span> Story runs › Cheating is refused
+  <span style="color: var(--color-warning)">⚠︎</span> Same run twice pays once
+      e2e: “the same run again: refused”
+      pass at 94349a4 (ci run 38215980266)
+      changed since: services/api/src/runs.rs
+  <span style="color: var(--color-success)">✓</span> Worker catches moved inputs
+      pass at 7c6eb24 (local)</div>
+</div>
+</div>
+</section>
+
+<section aria-labelledby="h-space" style="display: flex; flex-direction: column; gap: 24px">
+<h2 id="h-space" style="margin: 0; font-size: var(--text-xl); font-weight: 500">Space, radius, depth</h2>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 32px">
+<div style="display: flex; flex-direction: column; gap: 8px">
+<sc-for list="{{spaces}}" as="sp" hint-placeholder-count="8">
+<div style="display: flex; align-items: center; gap: 12px">
+<span style="font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-text-faint); width: 72px">{{sp.name}}</span>
+<span style="display: block; height: 8px; width: {{sp.px}}; background: var(--color-accent); border-radius: 2px"></span>
+<span style="font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-text-muted)">{{sp.px}}</span>
+</div>
+</sc-for>
+</div>
+<div style="display: flex; gap: 16px; flex-wrap: wrap; align-items: flex-start">
+<div style="display: flex; flex-direction: column; gap: 8px; align-items: center"><span style="display: block; width: 64px; height: 64px; border: 1px solid var(--color-border-strong); border-radius: var(--radius-s)"></span><span style="font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-text-muted)">radius-s 4</span></div>
+<div style="display: flex; flex-direction: column; gap: 8px; align-items: center"><span style="display: block; width: 64px; height: 64px; border: 1px solid var(--color-border-strong); border-radius: var(--radius-m)"></span><span style="font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-text-muted)">radius-m 6</span></div>
+<div style="display: flex; flex-direction: column; gap: 8px; align-items: center"><span style="display: block; width: 64px; height: 64px; border: 1px solid var(--color-border-strong); border-radius: var(--radius-l)"></span><span style="font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-text-muted)">radius-l 10</span></div>
+<div style="display: flex; flex-direction: column; gap: 8px; align-items: center"><span style="display: block; width: 64px; height: 64px; background: var(--color-surface-raised); border-radius: var(--radius-m); box-shadow: var(--shadow-1)"></span><span style="font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-text-muted)">shadow-1</span></div>
+<div style="display: flex; flex-direction: column; gap: 8px; align-items: center"><span style="display: block; width: 64px; height: 64px; background: var(--color-surface-raised); border-radius: var(--radius-l); box-shadow: var(--shadow-2)"></span><span style="font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-text-muted)">shadow-2</span></div>
+</div>
+</div>
+<p style="margin: 0; color: var(--color-text-muted); max-width: 760px">Flat by default. Borders separate; shadow-2 is only for the palette and menus that float over content.</p>
+</section>
+
+<section aria-labelledby="h-motion" style="display: flex; flex-direction: column; gap: 24px">
+<h2 id="h-motion" style="margin: 0; font-size: var(--text-xl); font-weight: 500">Motion</h2>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 32px; align-items: start">
+<div style="display: flex; flex-direction: column; gap: 16px; padding: 24px; border: 1px solid var(--color-border); border-radius: var(--radius-l); background: var(--color-surface-raised)">
+<span style="font-size: var(--text-s); color: var(--color-text-faint)">Signature: settle. A verdict lands where it belongs.</span>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<sc-for list="{{settleDemo}}" as="d" hint-placeholder-count="5">
+<div style="display: flex; align-items: center; gap: 12px; padding: 6px 0">
+<span class="settle-loop" aria-hidden="true" style="display: inline-block; width: 16px; text-align: center; font-family: var(--font-mono); font-weight: 600; color: {{d.color}}; animation-delay: {{d.delay}}">{{d.glyph}}</span>
+<span style="color: var(--color-text-muted)">{{d.name}}</span>
+</div>
+</sc-for>
+</div>
+<span style="font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-text-muted)">scale .55 → 1.08 → 1 · opacity 0 → 1 · dur-base · ease-out · stagger 40ms per row</span>
+</div>
+<div style="display: flex; flex-direction: column; gap: 10px">
+<sc-for list="{{motion}}" as="m" hint-placeholder-count="7">
+<div style="display: grid; grid-template-columns: minmax(120px, 160px) minmax(0, 1fr); gap: 16px; padding-bottom: 10px; border-bottom: 1px solid var(--color-border)">
+<span style="font-family: var(--font-mono); font-size: var(--text-s)">{{m.name}}</span>
+<span style="font-size: var(--text-s); color: var(--color-text-muted)">{{m.use}}</span>
+</div>
+</sc-for>
+<p style="margin: 6px 0 0; font-size: var(--text-s); color: var(--color-text-muted)">Only transform and opacity animate. Motion explains a cause: a run finishing, a file changing. With reduced motion, settle becomes a 160ms fade and the spinner a slow pulse.</p>
+</div>
+</div>
+</section>
+
+<section aria-labelledby="h-comp" style="display: flex; flex-direction: column; gap: 24px">
+<h2 id="h-comp" style="margin: 0; font-size: var(--text-xl); font-weight: 500">Components</h2>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 16px">
+
+<div style="display: flex; flex-direction: column; gap: 16px; padding: 20px; border: 1px solid var(--color-border); border-radius: var(--radius-l)">
+<span style="font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-text-faint)">Button · Kbd</span>
+<div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center">
+<button class="btn btn-primary" type="button" style="display: inline-flex; align-items: center; gap: 8px; height: 32px; padding: 0 12px; border: 0; border-radius: var(--radius-m); background: var(--color-accent); color: var(--color-accent-text); font: inherit; font-weight: 500">Run 33 stale <kbd style="font-family: var(--font-mono); font-size: var(--text-xs); opacity: 0.75">⌘⇧R</kbd></button>
+<button class="btn" type="button" style="height: 32px; padding: 0 12px; border: 1px solid var(--color-border); border-radius: var(--radius-m); background: transparent; color: var(--color-text); font: inherit">Import CI log</button>
+<button class="btn" type="button" aria-label="Copy as CLI command" style="display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; padding: 0; border: 1px solid transparent; border-radius: var(--radius-m); background: transparent; color: var(--color-text-muted)"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 4l3 3-3 3M8 11h5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg></button>
+</div>
+<span style="font-size: var(--text-s); color: var(--color-text-muted)">32px in the app, 44px hit area on touch. One primary per view.</span>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 16px; padding: 20px; border: 1px solid var(--color-border); border-radius: var(--radius-l)">
+<span style="font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-text-faint)">StatusGlyph · PathChip · Tag</span>
+<div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center">
+<span style="display: inline-flex; align-items: center; gap: 6px; font-size: var(--text-s)"><span aria-hidden="true" style="font-family: var(--font-mono); font-weight: 600; color: var(--color-warning)">⚠︎</span>stale</span>
+<code style="font-family: var(--font-mono); font-size: var(--text-s); padding: 2px 6px; border-radius: var(--radius-s); background: var(--color-surface-sunken); border: 1px solid var(--color-border); color: var(--color-text-muted)">services/api/src/runs.rs</code>
+<span style="font-size: var(--text-xs); padding: 1px 6px; border-radius: var(--radius-full); border: 1px dashed var(--color-border-strong); color: var(--color-text-muted)">inferred</span>
+</div>
+<span style="font-size: var(--text-s); color: var(--color-text-muted)">Inferred is a dashed tag: drawn by an agent, not yet reviewed.</span>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 12px; padding: 20px; border: 1px solid var(--color-border); border-radius: var(--radius-l)">
+<span style="font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-text-faint)">CapabilityRow</span>
+<a href="Capability.dc.html" class="row" style="display: grid; grid-template-columns: 20px minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 8px 10px; margin: 0 -10px; border-radius: var(--radius-m)">
+<span aria-hidden="true" style="font-family: var(--font-mono); font-weight: 600; color: var(--color-warning); text-align: center">⚠︎</span>
+<span style="display: flex; flex-direction: column; min-width: 0"><span>Cheating is refused</span><span style="font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-text-faint); overflow: hidden; text-overflow: ellipsis; white-space: nowrap">stale · changed record.js, runs.rs, check.mjs</span></span>
+<span style="font-family: var(--font-mono); font-size: var(--text-s); color: var(--color-text-muted)">3/6</span>
+</a>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 12px; padding: 20px; border: 1px solid var(--color-border); border-radius: var(--radius-l)">
+<span style="font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-text-faint)">Notice</span>
+<div role="status" style="display: flex; gap: 12px; align-items: flex-start; padding: 12px; border-radius: var(--radius-m); background: var(--color-surface-sunken); border: 1px solid var(--color-border)">
+<span aria-hidden="true" style="font-family: var(--font-mono); font-weight: 600; color: var(--color-blocked)">⊘</span>
+<span style="display: flex; flex-direction: column; gap: 2px"><span>e2e can’t run on this machine</span><span style="font-size: var(--text-s); color: var(--color-text-muted)">It needs 6 GB of free memory. Use the last CI run instead.</span></span>
+</div>
+</div>
+
+</div>
+</section>
+
+<section aria-labelledby="h-keys" style="display: flex; flex-direction: column; gap: 24px">
+<h2 id="h-keys" style="margin: 0; font-size: var(--text-xl); font-weight: 500">Every action has a key and a command</h2>
+<div role="table" aria-label="Keys and commands" style="border: 1px solid var(--color-border); border-radius: var(--radius-l); overflow: hidden">
+<div role="row" style="display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(64px, 0.5fr) minmax(0, 1.3fr); gap: 16px; padding: 12px 20px; font-size: var(--text-s); color: var(--color-text-faint)"><span role="columnheader">Action</span><span role="columnheader">Key</span><span role="columnheader">CLI</span></div>
+<sc-for list="{{keys}}" as="k" hint-placeholder-count="9">
+<div role="row" style="display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(64px, 0.5fr) minmax(0, 1.3fr); gap: 16px; align-items: center; padding: 10px 20px; border-top: 1px solid var(--color-border)"><span role="cell">{{k.action}}</span><span role="cell"><kbd style="font-family: var(--font-mono); font-size: var(--text-s); padding: 2px 6px; border-radius: var(--radius-s); border: 1px solid var(--color-border-strong); color: var(--color-text-muted); white-space: nowrap">{{k.key}}</kbd></span><code role="cell" style="font-family: var(--font-mono); font-size: var(--text-s); color: var(--color-text-muted); overflow-wrap: anywhere">{{k.cli}}</code></div>
+</sc-for>
+</div>
+</section>
+
+<section aria-labelledby="h-handoff" style="display: flex; flex-direction: column; gap: 24px; padding-bottom: 32px">
+<h2 id="h-handoff" style="margin: 0; font-size: var(--text-xl); font-weight: 500">Handoff</h2>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 32px">
+<div style="display: flex; flex-direction: column; gap: 8px"><span style="font-size: var(--text-s); color: var(--color-text-faint)">Tokens</span><span style="color: var(--color-text-muted)">One source, three outputs: <code style="font-family: var(--font-mono); font-size: var(--text-s); color: var(--color-text)">tokens.css</code> for these mockups, <code style="font-family: var(--font-mono); font-size: var(--text-s); color: var(--color-text)">tokens.json</code>, and <code style="font-family: var(--font-mono); font-size: var(--text-s); color: var(--color-text)">theme.rs</code> for the GPUI app. Same names everywhere.</span></div>
+<div style="display: flex; flex-direction: column; gap: 8px"><span style="font-size: var(--text-s); color: var(--color-text-faint)">Budgets</span><span style="color: var(--color-text-muted)">Window in under 300 ms. 120 fps scrolling 10,000 scenarios. Status refresh under 50 ms for a 1,000-file change.</span></div>
+<div style="display: flex; flex-direction: column; gap: 8px"><span style="font-size: var(--text-s); color: var(--color-text-faint)">Agent surface</span><span style="color: var(--color-text-muted)">Every view has a <code style="font-family: var(--font-mono); font-size: var(--text-s); color: var(--color-text)">--json</code> twin. Stable ids like <code style="font-family: var(--font-mono); font-size: var(--text-s); color: var(--color-text)">story-runs/cheating-is-refused</code>. The app never does what the CLI can’t.</span></div>
+</div>
+</section>
+
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["dark","light"],"default":"dark"},"$preview":{"width":1440,"height":3560}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const W = '⚠︎';
+    return {
+      theme: this.props.theme ?? 'dark',
+      states: [
+        { glyph: '✓', name: 'passing', color: 'var(--color-success)', meaning: 'Every scenario passed on the code it claims.' },
+        { glyph: '✗', name: 'failing', color: 'var(--color-danger)', meaning: 'A scenario failed on this code.' },
+        { glyph: W, name: 'stale', color: 'var(--color-warning)', meaning: 'It passed, but code it claims has changed since.' },
+        { glyph: '?', name: 'missing', color: 'var(--color-missing)', meaning: 'The test it points at is gone or renamed.' },
+        { glyph: '⊘', name: 'blocked', color: 'var(--color-blocked)', meaning: 'Could not run here. Not a failure.' },
+        { glyph: '○', name: 'unverified', color: 'var(--color-text-faint)', meaning: 'Never run.' }
+      ],
+      swatches: [
+        { name: '--color-surface', role: 'Window', dark: '#0f1012', light: '#fbfbfa' },
+        { name: '--color-surface-raised', role: 'Panels, rows', dark: '#17181b', light: '#ffffff' },
+        { name: '--color-surface-sunken', role: 'Code, inputs', dark: '#0a0a0c', light: '#f3f3f1' },
+        { name: '--color-border', role: 'Dividers', dark: '#26282c', light: '#e4e4e0' },
+        { name: '--color-text', role: 'Primary text', dark: '#ececee', light: '#18191b' },
+        { name: '--color-text-muted', role: 'Secondary text', dark: '#a0a4ab', light: '#5b5f66' },
+        { name: '--color-text-faint', role: 'Labels, paths', dark: '#80848c', light: '#6c7077' },
+        { name: '--color-accent', role: 'Primary action, focus', dark: '#8ab4ff', light: '#2f6fe4' },
+        { name: '--color-success', role: 'Passing', dark: '#4cc38a', light: '#17834f' },
+        { name: '--color-danger', role: 'Failing', dark: '#ff6a5c', light: '#c8372b' },
+        { name: '--color-warning', role: 'Stale', dark: '#e5b544', light: '#95680a' },
+        { name: '--color-missing', role: 'Missing', dark: '#b49cff', light: '#6d4fd1' },
+        { name: '--color-blocked', role: 'Blocked', dark: '#5fb8c9', light: '#1f7a8c' }
+      ],
+      scale: [
+        { name: '3xl 40', size: '40px', weight: 500, sample: 'What still works' },
+        { name: '2xl 28', size: '28px', weight: 500, sample: 'Example App' },
+        { name: 'xl 20', size: '20px', weight: 500, sample: 'Cheating is refused' },
+        { name: 'm 14', size: '14px', weight: 500, sample: 'Story runs' },
+        { name: 'base 13', size: '13px', weight: 400, sample: 'Same run twice pays once' },
+        { name: 's 12', size: '12px', weight: 400, sample: 'changed since 94349a4' },
+        { name: 'xs 11', size: '11px', weight: 400, sample: '93 scenarios · 4 runners' }
+      ],
+      spaces: [
+        { name: 'space-1', px: '4px' }, { name: 'space-2', px: '8px' }, { name: 'space-3', px: '12px' },
+        { name: 'space-4', px: '16px' }, { name: 'space-5', px: '24px' }, { name: 'space-6', px: '32px' },
+        { name: 'space-7', px: '48px' }, { name: 'space-8', px: '64px' }
+      ],
+      settleDemo: [
+        { glyph: '✓', color: 'var(--color-success)', name: 'Tiers from launch speed', delay: '0ms' },
+        { glyph: '✓', color: 'var(--color-success)', name: 'Speed formula', delay: '40ms' },
+        { glyph: '✗', color: 'var(--color-danger)', name: 'Every move is wired up', delay: '80ms' },
+        { glyph: '✓', color: 'var(--color-success)', name: 'Every tier has a sound', delay: '120ms' },
+        { glyph: '⊘', color: 'var(--color-blocked)', name: 'Same run twice pays once', delay: '160ms' }
+      ],
+      motion: [
+        { name: '--dur-instant 80ms', use: 'Hover, press' },
+        { name: '--dur-quick 160ms', use: 'Palette open, row expand, reduced-motion fade' },
+        { name: '--dur-base 240ms', use: 'Settle' },
+        { name: '--dur-slow 400ms', use: 'View change' },
+        { name: '--ease-out', use: 'cubic-bezier(.2, .8, .2, 1) · entering' },
+        { name: '--ease-in-out', use: 'cubic-bezier(.65, 0, .35, 1) · moving' },
+        { name: '--stagger 40ms', use: 'Results arriving down a list' }
+      ],
+      keys: [
+        { action: 'Command palette', key: '⌘K', cli: 'proof --help' },
+        { action: 'Map', key: '⌘1', cli: 'proof status' },
+        { action: 'Changes', key: '⌘2', cli: 'proof affected' },
+        { action: 'Open capability', key: '↵', cli: 'proof show "<name>"' },
+        { action: 'Run selection', key: '⌘R', cli: 'proof run "<name>"' },
+        { action: 'Run everything stale', key: '⌘⇧R', cli: 'proof run' },
+        { action: 'Import a CI log', key: '⌘I', cli: 'proof import <runner> <log>' },
+        { action: 'Copy as CLI', key: '⌘⇧C', cli: '—' },
+        { action: 'Next, previous row', key: 'J  K', cli: '—' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

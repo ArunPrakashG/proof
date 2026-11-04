@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>proof · Runners and states</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="/_blob/827aa23fd4fdcd62dbf3cfe0f7745b39">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&amp;family=Geist+Mono:wght@400;500;600&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div class="proof-root theme-{{theme}}" style="min-height: 100vh; display: flex; flex-direction: column">
+
+<header style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap; min-height: 48px; padding: 6px 16px; border-bottom: 1px solid var(--color-border); box-sizing: border-box">
+<svg width="20" height="20" viewBox="0 0 32 32" fill="none" role="img" aria-label="proof"><rect x="2" y="2" width="28" height="28" rx="8" stroke="var(--color-text)" stroke-width="3"></rect><path d="M9.5 16.5l4.5 4.5 8.5-9.5" stroke="var(--color-success)" stroke-width="3.25" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+<span style="font-weight: 500">Example App</span>
+<span style="font-family: var(--font-mono); font-size: var(--text-s); color: var(--color-text-faint)">main @ 7c6eb24</span>
+<span style="flex: 1 1 0"></span>
+<a href="Palette.dc.html" class="btn" style="display: inline-flex; align-items: center; gap: 8px; height: 32px; padding: 0 10px; flex: 0 1 300px; min-width: 180px; box-sizing: border-box; border: 1px solid var(--color-border); border-radius: var(--radius-m); background: var(--color-surface-sunken); color: var(--color-text-faint); font-size: var(--text-s)"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="7" cy="7" r="4.5" stroke="currentColor" stroke-width="1.5"></circle><path d="M10.5 10.5L14 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path></svg><span style="flex: 1">Find or run</span><kbd style="font-family: var(--font-mono); font-size: var(--text-xs)">⌘K</kbd></a>
+</header>
+
+<div style="display: flex; flex-wrap: wrap; flex: 1">
+
+<nav aria-label="Project" style="flex: 1 1 220px; display: flex; flex-direction: column; gap: 24px; padding: 16px 12px; border-right: 1px solid var(--color-border); box-sizing: border-box">
+<div style="display: flex; flex-direction: column; gap: 2px">
+<a href="Map.dc.html" class="row" style="display: flex; align-items: center; gap: 10px; height: 32px; padding: 0 10px; border-radius: var(--radius-m); color: var(--color-text-muted)"><span style="flex: 1">Map</span><span style="font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-text-faint)">33</span></a>
+<a href="Changes.dc.html" class="row" style="display: flex; align-items: center; gap: 10px; height: 32px; padding: 0 10px; border-radius: var(--radius-m); color: var(--color-text-muted)"><span style="flex: 1">Changes</span><span style="font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-text-faint)">21</span></a>
+<a href="States.dc.html" aria-current="page" class="row" style="display: flex; align-items: center; gap: 10px; height: 32px; padding: 0 10px; border-radius: var(--radius-m); background: var(--color-surface-hover)"><span style="flex: 1">Runners</span><span style="font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-text-faint)">4</span></a>
+</div>
+</nav>
+
+<main style="flex: 999 1 560px; min-width: 0; padding: clamp(20px, 3vw, 40px) clamp(16px, 3vw, 48px) 64px; box-sizing: border-box">
+<div style="max-width: 960px; margin: 0 auto; display: flex; flex-direction: column; gap: 40px">
+
+<div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap">
+<h1 style="margin: 0; font-size: var(--text-xl); font-weight: 500; flex: 1 1 auto">Runners</h1>
+<button class="btn" type="button" style="display: inline-flex; align-items: center; gap: 8px; height: 32px; padding: 0 12px; border: 1px solid var(--color-border); border-radius: var(--radius-m); background: transparent; color: var(--color-text); font: inherit">Stop<kbd style="font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-text-faint)">⌘.</kbd></button>
+</div>
+
+<div style="display: flex; flex-direction: column; border-top: 1px solid var(--color-border)">
+
+<section aria-label="game, running" style="display: flex; flex-direction: column; border-bottom: 1px solid var(--color-border)">
+<div style="display: grid; grid-template-columns: 20px minmax(0, 1fr) auto; gap: 12px; align-items: center; min-height: 56px; padding: 8px 10px; box-sizing: border-box">
+<svg class="spin" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true" style="justify-self: center"><circle cx="8" cy="8" r="6" stroke="var(--color-border-strong)" stroke-width="2"></circle><path d="M8 2a6 6 0 0 1 6 6" stroke="var(--color-accent)" stroke-width="2" stroke-linecap="round"></path></svg>
+<span style="display: flex; flex-direction: column; gap: 2px; min-width: 0"><span><span style="font-family: var(--font-mono)">game</span><span style="color: var(--color-text-muted)">  running, 12 of 68 tests</span></span><code style="font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-text-faint); overflow: hidden; text-overflow: ellipsis; white-space: nowrap">node --test test/*.test.mjs · Node 24.14 · traced</code></span>
+<span style="font-family: var(--font-mono); font-size: var(--text-s); color: var(--color-text-muted)">0:09</span>
+</div>
+<div role="progressbar" aria-label="game progress" aria-valuemin="0" aria-valuemax="68" aria-valuenow="12" style="height: 2px; margin: 0 10px; background: var(--color-border); border-radius: 1px; overflow: hidden"><div style="width: 17.6%; height: 100%; background: var(--color-accent); transform-origin: left"></div></div>
+<div aria-live="polite" style="display: flex; flex-direction: column; padding: 8px 10px 14px 42px; gap: 2px">
+<sc-for list="{{live}}" as="r" hint-placeholder-count="4">
+<div style="display: flex; align-items: center; gap: 10px; min-height: 26px; font-size: var(--text-s)">
+<span class="settle" aria-hidden="true" style="width: 14px; text-align: center; font-family: var(--font-mono); font-weight: 600; color: {{r.color}}; animation-delay: {{r.delay}}">{{r.glyph}}</span>
+<span style="color: var(--color-text-muted)">{{r.name}}</span>
+<span style="font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-text-faint)">{{r.cap}}</span>
+</div>
+</sc-for>
+</div>
+</section>
+
+<section aria-label="replay, passing" style="display: grid; grid-template-columns: 20px minmax(0, 1fr) auto; gap: 12px; align-items: center; min-height: 56px; padding: 8px 10px; box-sizing: border-box; border-bottom: 1px solid var(--color-border)">
+<span aria-hidden="true" style="text-align: center; font-family: var(--font-mono); font-weight: 600; color: var(--color-success)">✓</span>
+<span style="display: flex; flex-direction: column; gap: 2px; min-width: 0"><span><span style="font-family: var(--font-mono)">replay</span><span style="color: var(--color-text-muted)">  11 passed</span></span><code style="font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-text-faint)">node --test test/*.test.mjs · Node 24.14 · traced</code></span>
+<span style="font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-text-faint)">7c6eb24 · local</span>
+</section>
+
+<section aria-label="api, blocked" style="display: flex; flex-direction: column; gap: 12px; padding: 12px 10px 16px; border-bottom: 1px solid var(--color-border)">
+<div style="display: grid; grid-template-columns: 20px minmax(0, 1fr) auto; gap: 12px; align-items: center">
+<span aria-hidden="true" style="text-align: center; font-family: var(--font-mono); font-weight: 600; color: var(--color-blocked)">⊘</span>
+<span style="display: flex; flex-direction: column; gap: 2px; min-width: 0"><span><span style="font-family: var(--font-mono)">api</span><span style="color: var(--color-text-muted)">  blocked, can’t run on this machine</span></span><code style="font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-text-faint)">cargo test --locked</code></span>
+<span style="font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-text-faint)">94349a4 · CI</span>
+</div>
+<div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-left: 32px; padding: 10px 12px; border-radius: var(--radius-m); background: var(--color-surface-sunken); border: 1px solid var(--color-border)">
+<code style="flex: 1 1 280px; font-family: var(--font-mono); font-size: var(--text-s); color: var(--color-text-muted)">under 6 GB free: not building the API here</code>
+<button class="btn" type="button" style="height: 32px; padding: 0 12px; border: 1px solid var(--color-border-strong); border-radius: var(--radius-m); background: var(--color-surface); color: var(--color-text); font: inherit">Import CI log</button>
+</div>
+<span style="margin-left: 32px; font-size: var(--text-s); color: var(--color-text-faint)">Blocked is not failing. Its scenarios keep the last verdict, marked with the commit it came from.</span>
+</section>
+
+<section aria-label="e2e, blocked" style="display: grid; grid-template-columns: 20px minmax(0, 1fr) auto; gap: 12px; align-items: center; min-height: 56px; padding: 8px 10px; box-sizing: border-box; border-bottom: 1px solid var(--color-border)">
+<span aria-hidden="true" style="text-align: center; font-family: var(--font-mono); font-weight: 600; color: var(--color-blocked)">⊘</span>
+<span style="display: flex; flex-direction: column; gap: 2px; min-width: 0"><span><span style="font-family: var(--font-mono)">e2e</span><span style="color: var(--color-text-muted)">  blocked, same reason</span></span><code style="font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-text-faint)">bash tests/e2e/e2e.sh</code></span>
+<span style="font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-text-faint)">94349a4 · CI</span>
+</section>
+
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px">
+
+<section aria-labelledby="h-empty" style="display: flex; flex-direction: column; gap: 16px; padding: 32px 24px; border: 1px solid var(--color-border); border-radius: var(--radius-l)">
+<span style="font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-text-faint)">Empty</span>
+<span aria-hidden="true" style="font-family: var(--font-mono); font-size: var(--text-xl); color: var(--color-text-faint)">○</span>
+<h2 id="h-empty" style="margin: 0; font-size: var(--text-m); font-weight: 500">No map in example yet</h2>
+<span style="color: var(--color-text-muted)">Your coding agent writes <code style="font-family: var(--font-mono); font-size: var(--text-s)">proof.toml</code> from the code and tests. Paste this to it:</span>
+<div style="display: flex; align-items: center; gap: 8px; padding: 10px 12px; border-radius: var(--radius-m); background: var(--color-surface-sunken); border: 1px solid var(--color-border)">
+<code style="flex: 1; font-family: var(--font-mono); font-size: var(--text-s)">Map this project with proof.</code>
+<button class="btn" type="button" aria-label="Copy prompt" style="display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; padding: 0; border: 1px solid transparent; border-radius: var(--radius-m); background: transparent; color: var(--color-text-muted)"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><rect x="5" y="5" width="8" height="8" rx="1.5" stroke="currentColor" stroke-width="1.5"></rect><path d="M3 10.5V4.5A1.5 1.5 0 0 1 4.5 3h6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path></svg></button>
+</div>
+</section>
+
+<section aria-labelledby="h-error" style="display: flex; flex-direction: column; gap: 16px; padding: 32px 24px; border: 1px solid var(--color-border); border-radius: var(--radius-l)">
+<span style="font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-text-faint)">Error</span>
+<span aria-hidden="true" style="font-family: var(--font-mono); font-size: var(--text-xl); font-weight: 600; color: var(--color-danger)">✗</span>
+<h2 id="h-error" style="margin: 0; font-size: var(--text-m); font-weight: 500">proof.toml can’t be read</h2>
+<code style="display: block; padding: 10px 12px; border-radius: var(--radius-m); background: var(--color-surface-sunken); border: 1px solid var(--color-border); font-family: var(--font-mono); font-size: var(--text-s); color: var(--color-text-muted); white-space: pre-wrap">line 214: scenario “Forged score rejected” uses runner “e2e2”, which isn’t defined</code>
+<span style="display: flex; gap: 8px; flex-wrap: wrap">
+<button class="btn" type="button" style="height: 32px; padding: 0 12px; border: 1px solid var(--color-border-strong); border-radius: var(--radius-m); background: var(--color-surface-raised); color: var(--color-text); font: inherit">Open at line 214</button>
+</span>
+<span style="font-size: var(--text-s); color: var(--color-text-faint)">The last good map stays on screen until this is fixed.</span>
+</section>
+
+</div>
+
+</div>
+</main>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["dark","light"],"default":"dark"},"$preview":{"width":1440,"height":1050}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const ok = ['✓', 'var(--color-success)'];
+    const live = [
+      [ok, 'tiers come from launch speed', 'Hits land as loud as they are'],
+      [ok, 'speed = knockback', 'Hits land as loud as they are'],
+      [ok, 'every move points at poses', 'Hits land as loud as they are'],
+      [ok, 'a tampered record does not reproduce', 'Cheating is refused']
+    ];
+    return {
+      theme: this.props.theme ?? 'dark',
+      live: live.map(([[glyph, color], name, cap], i) => ({ glyph, color, name, cap, delay: i * 40 + 'ms' }))
+    };
+  }
+}
+</script>
+</body>
+</html>
