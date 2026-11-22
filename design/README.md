@@ -11,4 +11,4 @@ Claude Design canvas: https://claude.ai/artifact/HiYFsDBGUe4FoKnGeFEyuR
 | `mockups/` | Screens: Map, Capability, Changes, Palette, States (runners, empty, error), MapLight |
 | `canvas/project/` | The canvas as published (`canvas.json` plus every artboard); publish from here |
 
-Content is real: the the example app map at `7c6eb24`.
+Content is illustrative: a sample game's map.

@@ -19,7 +19,6 @@ A coding agent writes and maintains the map. People read it in the desktop app.
 | `skill/SKILL.md` | How a coding agent maps a project and keeps it current (`proof guide`) |
 | `design/` | The approved design: foundations, tokens and the screens the app is built to |
 | `prototype/` | The Python prototype the model was proven with |
-| `examples/example` | A map of a real game, used to check the app and CLI |
 
 ## Build
 
@@ -38,10 +37,10 @@ proof run "story runs"
 proof-app --map path/to/proof.toml
 ```
 
-To try it on the example, clone the game it maps into `examples/example/work` at `7c6eb24`, then:
+To open a map in the app, point it at any project's `proof.toml`:
 
 ```bash
-proof-app --map examples/example/proof.toml
+proof-app --map path/to/proof.toml
 ```
 
 In the app, Ctrl+K (⌘K on macOS) finds a capability or runs any command, and shows the CLI command

@@ -1,8 +1,7 @@
 # proof: prototype
 
 A capability map with staleness, built to test one question: does tying verification results to the
-code they covered give a useful "what still works" signal, or is it noise? Dogfooded on example
-(Example App) at `7c6eb24`, using a local clone so the real repo was not touched.
+code they covered give a useful "what still works" signal, or is it noise? Dogfooded on a real project, using a local clone so the original repo was not touched.
 
 ## What is here
 
@@ -74,7 +73,7 @@ python3 eval_history.py maps/example.toml
    Changing claims (re-tracing) also makes older results stale until they're re-run, which is correct
    but should be explained in the UI.
 
-## Found in example along the way
+## Found along the way
 
 - GitHub Actions is disabled on the repo. The last CI run was 2026-10-12 at `94349a4`. 188 commits
   have landed since without CI, though the README says every push is checked.
